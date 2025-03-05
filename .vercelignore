@@ -1,0 +1,9 @@
+node_modules
+.vscode
+venv
+.vercel
+.git
+.gitignore
+.cache
+dist
+build
