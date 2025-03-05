@@ -7,3 +7,4 @@ venv
 .cache
 dist
 build
+.vercel.zip
