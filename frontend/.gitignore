@@ -5,7 +5,6 @@ yarn-debug.log*
 yarn-error.log*
 
 # Production
-build/
 dist/
 
 # Environment variables
@@ -22,3 +21,5 @@ dist/
 # Ignore backend virtual environment (if using Python)
 backend/venv/
 
+
+.vercel
