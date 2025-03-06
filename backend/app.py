@@ -1,29 +1,32 @@
 import logging
-from flask import Flask, render_template, request, jsonify
+import os
+from flask import Flask, render_template, request, jsonify, send_from_directory
 from flask_cors import CORS
+from dotenv import load_dotenv
 from routes.chat import chat_bp
 from routes.kakao import kakao_bp
 from routes.naver import naver_bp
 from routes.telegram import telegram_bp
-from dotenv import load_dotenv
-from fastapi.middleware.cors import CORSMiddleware
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["https://astonishing-pavlova-71a9ea.netlify.app"],  # Netlify 프론트엔드 URL 추가
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
+# 환경 변수 로드
 load_dotenv()
 
-# ✅ 로그 설정 추가 (DEBUG 레벨까지 출력)
-logging.basicConfig(level=logging.DEBUG)  
-logger = logging.getLogger(__name__)
-
+# ✅ Flask 앱 생성
 app = Flask(__name__)
-CORS(app, resources={r"/chat": {"origins": ["https://astonishing-pavlova-71a9ea.netlify.app", "http://localhost:3000", "https://4e065685d8e7.ngrok.app", "https://your-vercel-project-url.vercel.app"]}})
+
+# ✅ CORS 설정 (Netlify & Local 환경 허용)
+CORS(app, resources={r"/*": {
+    "origins": [
+        "https://astonishing-pavlova-71a9ea.netlify.app",
+        "http://localhost:3000"
+    ],
+    "methods": ["GET", "POST", "OPTIONS"],
+    "allow_headers": ["Content-Type", "Authorization"]
+}})
+
+# ✅ 로그 설정 추가
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 # ✅ API 라우트 등록
 app.register_blueprint(chat_bp)
@@ -39,7 +42,7 @@ def home():
 @app.route('/favicon.ico')
 def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static'),
-                              'favicon.ico', mimetype='image/vnd.microsoft.icon')
+                               'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 # ✅ Flask 앱 전역 오류 핸들러 추가 (모든 예외 출력)
 @app.errorhandler(Exception)
@@ -52,5 +55,5 @@ def chat():
     return {"reply": "백엔드와 연결 성공!"}
 
 if __name__ == "__main__":
-    logger.info("🚀 Flask 서버 시작됨 (PORT: 5002)")  
-    app.run(host="0.0.0.0", port=5002, debug=True)  # ✅ debug=True 설정
+    logger.info("🚀 Flask 서버 시작됨 (PORT: 5002)")
+    app.run(host="0.0.0.0", port=5002, debug=True)
