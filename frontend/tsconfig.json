@@ -11,7 +11,12 @@
     "isolatedModules": true,
     "noEmit": true,
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": "./src",
+    "paths": {
+      "@config": ["config.ts"]
+    }
+    
   },
   "include": ["src"]
 }
