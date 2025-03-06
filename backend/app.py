@@ -10,12 +10,11 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # 모든 도메인 허용
+    allow_origins=["https://astonishing-pavlova-71a9ea.netlify.app"],  # Netlify 프론트엔드 URL 추가
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 
 load_dotenv()
 
@@ -24,7 +23,7 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
-CORS(app, resources={r"/chat": {"origins": ["http://localhost:3000", "https://4e065685d8e7.ngrok.app", "https://your-vercel-project-url.vercel.app"]}})
+CORS(app, resources={r"/chat": {"origins": ["https://astonishing-pavlova-71a9ea.netlify.app", "http://localhost:3000", "https://4e065685d8e7.ngrok.app", "https://your-vercel-project-url.vercel.app"]}})
 
 # ✅ API 라우트 등록
 app.register_blueprint(chat_bp)
