@@ -6,8 +6,8 @@ const Chatbot: React.FC = () => {
   const [response, setResponse] = useState("");
 
   const sendMessage = async () => {
+    console.log("✅ Backend URL:", process.env.REACT_APP_BACKEND_URL); // 환경변수 값 확인용
     try {
-      console.log("Backend URL:", process.env.REACT_APP_BACKEND_URL); // 디버깅용
       const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/chat`, { 
         method: "POST",
         headers: {
@@ -18,10 +18,11 @@ const Chatbot: React.FC = () => {
       const data = await res.json();
       setResponse(data.reply);
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error("❌ 백엔드 요청 실패:", error);
       setResponse("Error: 백엔드와 연결할 수 없습니다.");
     }
   };
+  
   
   
   
