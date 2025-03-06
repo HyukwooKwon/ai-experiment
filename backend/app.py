@@ -6,6 +6,16 @@ from routes.kakao import kakao_bp
 from routes.naver import naver_bp
 from routes.telegram import telegram_bp
 from dotenv import load_dotenv
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # 모든 도메인 허용
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 load_dotenv()
 
@@ -37,6 +47,10 @@ def favicon():
 def handle_exception(e):
     logger.error(f"❌ 서버 오류 발생: {str(e)}")  # ✅ 오류 메시지 출력
     return jsonify({"error": "서버 내부 오류 발생"}), 500
+
+@app.route("/chat", methods=["POST"])
+def chat():
+    return {"reply": "백엔드와 연결 성공!"}
 
 if __name__ == "__main__":
     logger.info("🚀 Flask 서버 시작됨 (PORT: 5002)")  

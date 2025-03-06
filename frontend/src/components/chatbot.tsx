@@ -7,7 +7,8 @@ const Chatbot: React.FC = () => {
 
   const sendMessage = async () => {
     try {
-      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/chat`, {
+      console.log("Backend URL:", process.env.REACT_APP_BACKEND_URL); // 디버깅용
+      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/chat`, { 
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -21,6 +22,7 @@ const Chatbot: React.FC = () => {
       setResponse("Error: 백엔드와 연결할 수 없습니다.");
     }
   };
+  
   
   
 
