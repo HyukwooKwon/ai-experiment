@@ -14,19 +14,15 @@ load_dotenv()
 # ✅ Flask 앱 생성
 app = Flask(__name__)
 
-# ✅ CORS 설정 (Netlify & Local 환경 허용)
-CORS(app, resources={r"/*": {
-    "origins": [
-        "https://astonishing-pavlova-71a9ea.netlify.app",
-        "http://localhost:3000"
-    ],
-    "methods": ["GET", "POST", "OPTIONS"],
-    "allow_headers": ["Content-Type", "Authorization"]
-}})
+# ✅ CORS 설정 완전 수정 (Netlify와 모든 요청 허용)
+CORS(app, supports_credentials=True)
 
-# ✅ 로그 설정 추가
-logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger(__name__)
+@app.after_request
+def after_request(response):
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+    return response
 
 # ✅ API 라우트 등록
 app.register_blueprint(chat_bp)
@@ -36,7 +32,6 @@ app.register_blueprint(telegram_bp)
 
 @app.route("/")  # 루트 경로 추가
 def home():
-    logger.info("✅ 홈 페이지 요청이 들어옴!")
     return render_template("index.html")
 
 @app.route('/favicon.ico')
@@ -47,13 +42,15 @@ def favicon():
 # ✅ Flask 앱 전역 오류 핸들러 추가 (모든 예외 출력)
 @app.errorhandler(Exception)
 def handle_exception(e):
-    logger.error(f"❌ 서버 오류 발생: {str(e)}")  # ✅ 오류 메시지 출력
     return jsonify({"error": "서버 내부 오류 발생"}), 500
+
+@app.route("/chat", methods=["OPTIONS"])
+def chat_options():
+    return '', 204  # ✅ OPTIONS 요청 허용 (Preflight 문제 해결)
 
 @app.route("/chat", methods=["POST"])
 def chat():
-    return {"reply": "백엔드와 연결 성공!"}
+    return jsonify({"reply": "백엔드와 연결 성공!"})
 
 if __name__ == "__main__":
-    logger.info("🚀 Flask 서버 시작됨 (PORT: 5002)")
     app.run(host="0.0.0.0", port=5002, debug=True)
