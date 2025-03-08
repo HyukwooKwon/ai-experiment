@@ -38,7 +38,7 @@
     <button onclick="sendMessage()">전송</button>
 
     <script>
-        document.getElementById("userInput").addEventListener("keypress", function(event) {
+        document.getElementById("user-input").addEventListener("keypress", function(event) {
             if (event.key === "Enter") {  // 🔹 엔터 키 입력 감지
                 event.preventDefault();   // 🔹 기본 동작(줄바꿈) 방지
                 sendMessage();            // 🔹 자동으로 전송
@@ -61,8 +61,8 @@
             const data = await response.json();
             chatBox.innerHTML += `<p><strong>AI:</strong> ${data.reply}</p>`;
 
-            document.getElementById("user-input").value = "";
-            chatBox.scrollTop = chatBox.scrollHeight;
+            document.getElementById("user-input").value = "";  // 🔹 입력창 초기화
+            chatBox.scrollTop = chatBox.scrollHeight;  // 🔹 채팅창 스크롤 자동 이동
         }
     </script>
 </body>
