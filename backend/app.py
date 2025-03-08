@@ -3,6 +3,7 @@ from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 from chatbot import get_chatbot_response  # ✅ AI 응답 함수 가져오기
 from chatbot import create_or_update_faiss  # 🔹 벡터DB 업데이트 함수 추가
+import subprocess
 
 # ✅ Flask 앱 생성
 app = Flask(__name__, template_folder="templates", static_folder="static")
@@ -37,3 +38,6 @@ def update_db():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)), debug=True)
+
+    # ✅ 텔레그램 봇 실행 (백그라운드에서 실행)
+    subprocess.Popen(["python", "telegram_bot.py"])
