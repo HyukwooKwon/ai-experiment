@@ -1,2 +1,2 @@
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "https://chatbot-back-fegf.onrender.com";
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";  
 export default BACKEND_URL;

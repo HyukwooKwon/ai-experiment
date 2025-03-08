@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import BACKEND_URL from "../config";  
-import "./chatbot.css";  // ✅ CSS import
+import styles from "../components/chatbot.module.css";  // ✅ CSS 모듈로 변경
+
+
 
 const Chatbot = () => {
     const [messages, setMessages] = useState<string[]>([]);
@@ -30,7 +32,7 @@ const Chatbot = () => {
     };
 
     return (
-        <div className="chat-container">
+      <div className={styles.chatContainer}>
             <h2>AI Chatbot</h2>
             <div className="chat-box">
                 {messages.map((msg, index) => (

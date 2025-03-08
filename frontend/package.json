@@ -2,6 +2,7 @@
     "name": "frontend",
     "version": "1.0.0",
     "private": true,
+    "homepage": ".",
     "description": "React frontend for AI chatbot",
     "scripts": {
         "start": "react-scripts start",
