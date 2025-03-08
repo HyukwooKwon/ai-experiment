@@ -4,3 +4,4 @@ openai==1.65.3
 gunicorn==23.0.0
 python-dotenv
 requests
+langchain-community
