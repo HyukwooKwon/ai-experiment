@@ -1,7 +1,7 @@
 import os
 import telebot
 import requests
-from dotenv import load_dotenv  # ✅ .env 파일 로드
+from dotenv import load_dotenv
 
 # ✅ .env 파일 로드
 load_dotenv()
@@ -16,10 +16,14 @@ bot = telebot.TeleBot(BOT_TOKEN)
 # ✅ Flask 백엔드 URL (Render에 배포된 API 주소 입력)
 BACKEND_URL = "https://chatbot-back-fegf.onrender.com/chat"
 
-# ✅ 메시지 처리 함수
-@bot.message_handler(func=lambda message: True)
+# ✅ 봇의 사용자 이름 가져오기
+bot_info = bot.get_me()
+BOT_USERNAME = bot_info.username  # 예: "my_ai_bot"
+
+# ✅ 메시지 처리 함수 (태그된 메시지만 응답)
+@bot.message_handler(func=lambda message: message.text and f"@{BOT_USERNAME}" in message.text)
 def handle_message(message):
-    user_text = message.text  # 사용자 입력
+    user_text = message.text.replace(f"@{BOT_USERNAME}", "").strip()  # ✅ 봇 태그 제거
     chat_id = message.chat.id
 
     # ✅ 백엔드에 사용자 메시지 전송
@@ -33,5 +37,5 @@ def handle_message(message):
     bot.send_message(chat_id, bot_response)
 
 # ✅ 봇 실행
-print("🚀 텔레그램 봇 실행 중...")
+print("🚀 텔레그램 봇 실행 중... (태그된 메시지만 응답)")
 bot.polling()
