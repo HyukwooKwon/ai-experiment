@@ -27,6 +27,7 @@ def chat():
     except Exception as e:
         return jsonify({"error": f"서버 오류 발생: {str(e)}"}), 500
     
+@app.route("/update-db", methods=["POST"])
 def update_db():
     try:
         create_or_update_faiss()
