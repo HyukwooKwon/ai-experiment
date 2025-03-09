@@ -8,3 +8,4 @@ langchain-community
 langchain-openai
 faiss-cpu
 pyTelegramBotAPI
+unstructured
