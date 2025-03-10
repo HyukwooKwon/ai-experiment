@@ -7,13 +7,13 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # ✅ 업체별 환경변수 설정
-BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 COMPANY_NAME = os.getenv("COMPANY_NAME")
+BOT_TOKEN = os.getenv(f"TELEGRAM_BOT_TOKEN_{COMPANY_NAME}")  # ✅ 업체별 봇 토큰 가져오기
 
 if not BOT_TOKEN or not COMPANY_NAME:
     raise ValueError("❌ TELEGRAM_BOT_TOKEN 또는 COMPANY_NAME이 설정되지 않았습니다!")
 
-BACKEND_URL = f"https://chatbot-back-fegf.onrender.com/chatbot/{COMPANY_NAME}"
+BACKEND_URL = f"https://backend.onrender.com/chatbot/{COMPANY_NAME}"
 
 bot = telebot.TeleBot(BOT_TOKEN)
 
