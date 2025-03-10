@@ -1,27 +1,23 @@
-# Node.js dependencies
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# Production
-dist/
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
 
-# Environment variables
-.env
+# testing
+/coverage
+
+# production
+/build
+
+# misc
+.DS_Store
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
 
-# Editor files
-.vscode/
-.DS_Store
-
-# Ignore backend virtual environment (if using Python)
-backend/venv/
-
-
-.vercel
-
-.vercel
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
