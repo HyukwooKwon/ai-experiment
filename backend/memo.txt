@@ -1,0 +1,15 @@
+TELEGRAM_BOT_TOKEN=token_for_companyA COMPANY_NAME=companyA python telegram_bot.py
+TELEGRAM_BOT_TOKEN=token_for_companyB COMPANY_NAME=companyB python telegram_bot.py
+
+#frontend(chatbot.tsx)
+https://example.com/chatbot?company=companyA
+https://example.com/chatbot?company=companyB
+
+
+
+https://your-domain.com/chatbot/companyA
+https://your-domain.com/chatbot/companyB
+
+
+프론트엔드: https://frontend.onrender.com/?company=companyA
+백엔드: https://backend.onrender.com/chatbot/companyA
