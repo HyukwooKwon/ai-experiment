@@ -5,12 +5,14 @@ from langchain_community.vectorstores import FAISS
 from langchain_openai import OpenAIEmbeddings, ChatOpenAI
 from langchain.chains import RetrievalQA
 import openai
-from config import OPENAI_API_KEY  # ✅ config.py에서 API 키 불러오기
+from config import OPENAI_API_KEY
 
 openai.api_key = OPENAI_API_KEY
-
-FAISS_DB_PATH = "./faiss_index"
 DATABASE_DIR = "./database"
+
+# 벡터DB 경로 동적으로 설정
+def get_faiss_db_path(company_name):
+    return f"./faiss_indexes/{company_name}_index"
 
 def loader_selector(filepath):
     if filepath.endswith('.txt'):
@@ -22,10 +24,12 @@ def loader_selector(filepath):
     else:
         raise ValueError(f"지원하지 않는 파일 형식입니다: {filepath}")
 
-def create_or_update_faiss():
-    print("🚨 데이터 변경 감지! 벡터DB를 새로 생성합니다...")
+def create_or_update_faiss(company_name):
+    faiss_db_path = get_faiss_db_path(company_name)
+    database_dir = f"./database/{company_name}"
+
     loader = DirectoryLoader(
-        DATABASE_DIR,
+        database_dir,
         glob='**/*.*',
         loader_cls=loader_selector,
         use_multithreading=True
@@ -36,30 +40,34 @@ def create_or_update_faiss():
     texts = text_splitter.split_documents(documents)
 
     vectorstore = FAISS.from_documents(texts, OpenAIEmbeddings(api_key=OPENAI_API_KEY))
-    vectorstore.save_local(FAISS_DB_PATH)
-    print("✅ 벡터DB 업데이트 완료!")
+    vectorstore.save_local(faiss_db_path)
+    print(f"✅ {company_name}의 벡터DB 업데이트 완료!")
 
-if not os.path.exists(FAISS_DB_PATH):
-    create_or_update_faiss()
+# 업체별 vectorstore 로드
+def load_vectorstore(company_name):
+    faiss_db_path = get_faiss_db_path(company_name)
+    if not os.path.exists(faiss_db_path):
+        create_or_update_faiss(company_name)
 
-vectorstore = FAISS.load_local(
-    FAISS_DB_PATH, 
-    OpenAIEmbeddings(api_key=OPENAI_API_KEY), 
-    allow_dangerous_deserialization=True
-)
+    vectorstore = FAISS.load_local(
+        faiss_db_path, 
+        OpenAIEmbeddings(api_key=OPENAI_API_KEY), 
+        allow_dangerous_deserialization=True
+    )
+    return vectorstore
 
-qa_chain = RetrievalQA.from_chain_type(
-    ChatOpenAI(api_key=OPENAI_API_KEY, model='gpt-3.5-turbo'),
-    retriever=vectorstore.as_retriever()
-)
+# 업체별로 독립적인 응답 생성
+def get_chatbot_response(user_message, company_name):
+    vectorstore = load_vectorstore(company_name)
+    qa_chain = RetrievalQA.from_chain_type(
+        ChatOpenAI(api_key=OPENAI_API_KEY, model='gpt-3.5-turbo'),
+        retriever=vectorstore.as_retriever()
+    )
 
-def get_chatbot_response(user_message):
     try:
-        relevant_info = qa_chain.invoke(user_message)['result']
-        return relevant_info
-
+        result = qa_chain.invoke(user_message)['result']
+        return result
     except openai.OpenAIError as e:
         return f"❌ OpenAI API 오류 발생: {str(e)}"
-
     except Exception as e:
         return f"❌ 오류 발생: {str(e)}"
