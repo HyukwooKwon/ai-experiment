@@ -56,18 +56,22 @@ def load_vectorstore(company_name):
     )
     return vectorstore
 
-# 업체별로 독립적인 응답 생성
-def get_chatbot_response(user_message, company_name):
-    vectorstore = load_vectorstore(company_name)
-    qa_chain = RetrievalQA.from_chain_type(
-        ChatOpenAI(api_key=OPENAI_API_KEY, model='gpt-3.5-turbo'),
-        retriever=vectorstore.as_retriever()
-    )
+
+def get_chatbot_response(user_message, company_name, ai_model, openai_api_key):
+    print(f"🚀 {company_name} 업체 요청 - 사용 모델: {ai_model}")  # ✅ 확인용 로그 추가
 
     try:
-        result = qa_chain.invoke(user_message)['result']
-        return result
-    except openai.OpenAIError as e:
-        return f"❌ OpenAI API 오류 발생: {str(e)}"
+        chat = ChatOpenAI(api_key=openai_api_key, model=ai_model)
+        response = chat.invoke(user_message)
+
+        # ✅ OpenAI 응답에서 실제 메시지만 추출
+        if hasattr(response, 'content'):
+            return response.content  # ✅ 올바른 응답 데이터만 반환
+        else:
+            return str(response)  # 기존과 다르면 문자열로 변환
+
     except Exception as e:
-        return f"❌ 오류 발생: {str(e)}"
+        return f"❌ OpenAI API 오류 발생: {str(e)}"
+
+
+

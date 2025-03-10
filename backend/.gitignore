@@ -23,3 +23,5 @@ env/
 # Node.js 관련 (혹시 Express 등 추가할 경우)
 node_modules/
 package-lock.json
+
+memo.txt

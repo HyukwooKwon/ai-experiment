@@ -11,6 +11,9 @@ from datetime import datetime
 app = Flask(__name__, template_folder="templates", static_folder="static")
 CORS(app)
 
+# ✅ 현재 실행 중인 서버의 업체명
+CURRENT_COMPANY = os.getenv("COMPANY_NAME")
+
 # 동적 DB 연결 함수
 def get_company_db(company_name):
     db_path = f'databases/{company_name}.db'
@@ -32,24 +35,29 @@ def get_company_db(company_name):
 @app.route("/chatbot/<company_name>", methods=["POST"])
 def chatbot(company_name):
     try:
+        if company_name != CURRENT_COMPANY:
+            return jsonify({"error": f"❌ 현재 서버는 {CURRENT_COMPANY} 전용입니다. {company_name} 요청을 받을 수 없습니다."}), 403
+
         data = request.get_json()
         if not data or "message" not in data:
             return jsonify({"error": "잘못된 요청 형식입니다."}), 400
 
         user_message = data["message"]
-        bot_response = get_chatbot_response(user_message, company_name)
 
-        Session, ChatHistory = get_company_db(company_name)
-        session = Session()
+        # ✅ 업체별 AI 모델 및 API 키 가져오기
+        ai_model = os.getenv(f"AI_MODEL_{company_name}", "gpt-3.5-turbo")
+        openai_api_key = os.getenv(f"OPENAI_API_KEY_{company_name}")
 
-        chat_entry = ChatHistory(user_message=user_message, bot_response=bot_response)
-        session.add(chat_entry)
-        session.commit()
+        if not openai_api_key:
+            return jsonify({"error": "해당 업체의 API 키가 설정되지 않았습니다."}), 500
+
+        bot_response = get_chatbot_response(user_message, company_name, ai_model, openai_api_key)
 
         return jsonify({"reply": bot_response})
 
     except Exception as e:
         return jsonify({"error": f"서버 오류 발생: {str(e)}"}), 500
+
 
 @app.route("/update-db/<company_name>", methods=["POST"])
 def update_db(company_name):
@@ -59,5 +67,6 @@ def update_db(company_name):
     except Exception as e:
         return jsonify({"error": f"❌ 업데이트 실패: {str(e)}"}), 500
 
-if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)), debug=True)
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))  # 환경변수에서 포트 가져오기
+    app.run(host="0.0.0.0", port=port)
