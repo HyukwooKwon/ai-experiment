@@ -28,14 +28,21 @@
     background-color: #218838;
 }
 
-/* 🚀 팝업 내부 조정 */
+/* 🏆 팝업 컨테이너 (위치 및 크기 조정) */
 .popupContainer {
-    width: 100%;
-    max-width: 420px;
-    height: auto;
-    padding: 0;
-    border: none;
-    box-shadow: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* ✅ 정확한 중앙 정렬 */
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 90%;  /* ✅ 작은 화면에서도 잘 보이도록 설정 */
+    max-width: 420px;  /* ✅ 너무 커지지 않도록 제한 */
+    max-height: 80vh; /* ✅ 화면 높이 대비 최대 크기 제한 */
+    overflow-y: auto;  /* ✅ 넘칠 경우 스크롤 */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+    z-index: 1002;
 }
 
 /* 💡 팝업 오버레이 (배경 어둡게) */
@@ -69,17 +76,6 @@ textarea {
     resize: none; /* ✅ 사용자가 크기 조절 못하게 설정 */
 }
 
-/* 🚀 버튼 스타일 (문의 제출 & 닫기) */
-button {
-    width: 100%;
-    padding: 12px;
-    margin-top: 10px;
-    font-size: 16px;
-    font-weight: bold;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background 0.3s;
-}
 
 /* ✅ 문의 제출 버튼 */
 .submitButton {
@@ -103,23 +99,32 @@ button {
     background-color: #c82333;
 }
 
-/* 🏆 팝업 컨테이너 (스크롤바 제거 및 폭 조정) */
+/* 🏆 팝업 컨테이너 (스크롤바 제거) */
 .pum-container {
     position: fixed;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%); /* ✅ 정확한 중앙 정렬 */
-    width: calc(100% - 20px) !important; /* ✅ 부모 요소보다 넘치지 않도록 설정 */
-    max-width: 700px !important; /* ✅ 최대 너비 제한 */
-    height: 850px !important;
-    max-height: 90vh; /* ✅ 화면 높이를 넘지 않도록 설정 */
-    overflow: hidden !important; /* ✅ 불필요한 스크롤 제거 */
-    box-sizing: border-box; /* ✅ 패딩이 크기에 영향을 주지 않도록 설정 */
+    transform: translate(-50%, -50%);
+    width: 90% !important;  /* ✅ 부모 요소보다 넘치지 않도록 조정 */
+    max-width: 700px !important;
+    height: 85vh !important;  /* ✅ 화면 높이에 맞춰서 조정 */
+    max-height: 85vh;  /* ✅ 화면 높이를 넘지 않도록 제한 */
+    overflow: hidden !important; /* ✅ 내부 스크롤 제거 */
+    box-sizing: border-box;
     border-radius: 12px;
     box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.3);
 }
 
-/* 🎨 팝업 콘텐츠 영역 */
+/* 🎨 팝업 콘텐츠 영역 (스크롤바 제거) */
+.pum-content {
+    width: 100% !important;
+    height: 100% !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    box-sizing: border-box;
+}
+
+/* ✅ iframe 크기 조정 */
 .pum-content iframe {
     width: 100% !important;
     height: 100% !important;
@@ -129,20 +134,35 @@ button {
     overflow: hidden;
 }
 
-/* ✅ iframe 스타일 */
-.pum-content iframe {
-    width: 100% !important;
-    height: 100% !important;
-    border: none;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+/* 🏆 입력 필드 (폭 조정) */
+input, textarea {
+    width: calc(100% - 20px); /* ✅ 내부 여백 고려하여 폭 조정 */
+    padding: 12px;
+    margin: 5px auto;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border 0.3s;
+    box-sizing: border-box; /* ✅ 내부 패딩이 크기에 영향을 주지 않도록 설정 */
+}
+
+/* 🚀 버튼 스타일 (전송 & 문의 남기기) */
+button {
+    width: calc(100% - 20px);  /* ✅ 버튼이 넘치지 않도록 조정 */
+    padding: 12px;
+    margin: 5px auto;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s;
+    display: block;
 }
 
 /* 📱 반응형 디자인 */
 @media (max-width: 768px) {
     .pum-container {
-        width: calc(100% - 20px) !important;
-        max-width: 95% !important;
+        width: 95% !important;
         height: 90vh !important;
         max-height: 90%;
     }
@@ -212,17 +232,6 @@ button {
     border-right: 10px solid #f1f1f1;
     border-top: 5px solid transparent;
     border-bottom: 5px solid transparent;
-}
-
-/* ✏️ 입력 필드 */
-input, textarea {
-    width: 100%;
-    padding: 12px;
-    margin-top: 10px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 16px;
-    transition: border 0.3s;
 }
 
 
