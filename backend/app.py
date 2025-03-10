@@ -17,6 +17,13 @@ CURRENT_COMPANY = os.getenv("COMPANY_NAME")
 if not CURRENT_COMPANY:
     raise ValueError("❌ 환경 변수 'COMPANY_NAME'이 설정되지 않았습니다. Render 환경변수를 확인하세요!")
 
+# ✅ AI 키 확인
+OPENAI_API_KEY = os.getenv(f"OPENAI_API_KEY_{CURRENT_COMPANY}")
+if not OPENAI_API_KEY:
+    raise ValueError(f"❌ {CURRENT_COMPANY}의 OpenAI API 키가 설정되지 않았습니다. Render 환경변수를 확인하세요!")
+
+print(f"🚀 서버 시작됨 - 업체: {CURRENT_COMPANY}, 포트: {os.getenv('PORT')}")
+
 # 동적 DB 연결 함수
 def get_company_db(company_name):
     db_path = f'databases/{company_name}.db'
