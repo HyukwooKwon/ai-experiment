@@ -1,8 +1,9 @@
 
 
 #backend 로컬
-$env:COMPANY_NAME="companyA"; python app.py
-$env:COMPANY_NAME="companyB"; python app.py
+$env:COMPANY_NAME="companyA"; $env:PORT="5000"; python app.py
+$env:COMPANY_NAME="companyB"; $env:PORT="5001"; python app.py
+
 
 
 
