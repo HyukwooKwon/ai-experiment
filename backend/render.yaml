@@ -3,10 +3,26 @@ services:
     name: ai-chatbot-backend
     env: python
     buildCommand: "pip install -r requirements.txt"
-    startCommand: "gunicorn app:app --bind 0.0.0.0:$PORT"
+    startCommand: "gunicorn -w 1 -b 0.0.0.0:$PORT app:app"
+    envVars:
+      - key: COMPANY_NAME
+        value: companyA
+      - key: PORT
+        value: 10000
+      - key: AI_MODEL_companyA
+        value: gpt-4-turbo
+      - key: OPENAI_API_KEY_companyA
+        sync: false
+      - key: TELEGRAM_BOT_TOKEN_companyA
+        sync: false
     
   - type: worker
     name: telegram-bot
     env: python
     buildCommand: "pip install -r requirements.txt"
     startCommand: "bash start_telegram.sh"
+    envVars:
+      - key: COMPANY_NAME
+        value: companyA
+      - key: TELEGRAM_BOT_TOKEN_companyA
+        sync: false

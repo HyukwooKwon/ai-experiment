@@ -9,3 +9,4 @@ langchain-openai
 faiss-cpu
 pyTelegramBotAPI
 unstructured
+SQLAlchemy  # ✅ DB 관련 패키지 추가
