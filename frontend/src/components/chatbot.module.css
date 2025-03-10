@@ -19,14 +19,98 @@
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* 📩 문의 남기기 컨테이너 */
-.inquiryContainer {
-    width: 35%;
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 12px;
+/* ✅ 문의 남기기 버튼 (초록색) */
+.inquiryButton {
+    background-color: #28a745;
+}
+
+.inquiryButton:hover {
+    background-color: #218838;
+}
+
+/* 🏆 문의 남기기 팝업 */
+.popupOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* 🏆 문의 남기기 팝업 */
+.popupContainer {
     background: white;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+    width: 400px;  /* 기존 350px → 400px로 조정 */
+    height: auto;  /* ✅ 높이를 자동으로 조절 */
+    text-align: center;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 📩 입력 필드 공통 스타일 */
+input, textarea {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0; /* ✅ 간격 조정 */
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border 0.3s;
+}
+
+/* 📄 문의 내용 입력 칸 (높이 조정) */
+textarea {
+    height: 100px;  /* ✅ 기존보다 작게 설정 */
+    resize: none;   /* ✅ 사용자가 크기 조절 못하도록 설정 */
+}
+
+/* 🚀 버튼 스타일 */
+button {
+    width: calc(100% - 20px);  /* ✅ 버튼이 부모 요소 너비를 넘지 않도록 설정 */
+    padding: 12px;
+    margin-top: 5px;  
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+    box-sizing: border-box;  /* ✅ 컨테이너 너비를 넘지 않도록 설정 */
+}
+
+/* ✅ 문의 제출 버튼 */
+.submitButton {
+    background-color: #007bff;
+    color: white;
+    border: none;
+}
+
+.submitButton:hover {
+    background-color: #0056b3;
+}
+
+/* ❌ 닫기 버튼 */
+.closeButton {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+}
+
+
+.closeButton:hover {
+    background-color: #c82333;
 }
 
 /* 🏆 챗봇 메시지 박스 */
@@ -105,20 +189,6 @@ input, textarea {
     transition: border 0.3s;
 }
 
-/* 🚀 버튼 스타일 */
-button {
-    width: 100%;
-    padding: 12px;
-    margin-top: 10px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background 0.3s;
-}
 
 button:hover {
     background-color: #0056b3;
@@ -133,4 +203,10 @@ button:hover {
     .chatContainer, .inquiryContainer {
         width: 100%;
     }
+
+/* ✅ 모바일 화면에서 버튼이 넘치지 않도록 설정 */
+button {
+width: 100%;
+}
+
 }

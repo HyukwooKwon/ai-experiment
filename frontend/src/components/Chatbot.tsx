@@ -8,6 +8,7 @@ const Chatbot = () => {
     const [input, setInput] = useState("");
     const [contact, setContact] = useState("");
     const [inquiry, setInquiry] = useState("");
+    const [showInquiryForm, setShowInquiryForm] = useState(false);  // ✅ 팝업 상태 관리
 
     // ✅ URL에서 companyName 가져오기
     const [searchParams] = useSearchParams();
@@ -25,11 +26,6 @@ const Chatbot = () => {
         try {
             const response = await axios.post(`${BACKEND_URL}/chatbot/${companyName}`, {
                 message: input
-            }, {
-                headers: { 
-                    "Content-Type": "application/json",
-                    "Accept": "application/json"
-                }
             });
 
             setMessages(prevMessages => [...prevMessages, `🤖 AI: ${response.data.reply}`]);
@@ -64,6 +60,7 @@ const Chatbot = () => {
             alert("✅ 문의가 접수되었습니다!");
             setContact("");
             setInquiry("");
+            setShowInquiryForm(false);  // ✅ 문의 제출 후 팝업 닫기
         } catch (error) {
             alert("❌ 문의 접수에 실패했습니다. 다시 시도해주세요.");
             console.error("🚨 문의 제출 오류:", error);
@@ -88,24 +85,32 @@ const Chatbot = () => {
                     placeholder="메시지를 입력하세요..."
                 />
                 <button onClick={sendMessage}>📩 전송</button>
+
+                {/* 문의 남기기 버튼 추가 */}
+                <button className={styles.inquiryButton} onClick={() => setShowInquiryForm(true)}>📩 문의 남기기</button>
             </div>
 
-            {/* 오른쪽 - 문의 남기기 폼 */}
-            <div className={styles.inquiryContainer}>
-                <h2>📩 문의 남기기</h2>
-                <input
-                    type="text"
-                    value={contact}
-                    onChange={(e) => setContact(e.target.value)}
-                    placeholder="연락처 입력"
-                />
-                <textarea
-                    value={inquiry}
-                    onChange={(e) => setInquiry(e.target.value)}
-                    placeholder="문의 내용을 입력하세요..."
-                />
-                <button onClick={submitInquiry}>✅ 문의 제출</button>
-            </div>
+            {/* 문의 남기기 팝업 */}
+            {showInquiryForm && (
+                <div className={styles.popupOverlay}>
+                    <div className={styles.popupContainer}>
+                        <h2>📩 문의 남기기</h2>
+                        <input
+                            type="text"
+                            value={contact}
+                            onChange={(e) => setContact(e.target.value)}
+                            placeholder="연락처 입력"
+                        />
+                        <textarea
+                            value={inquiry}
+                            onChange={(e) => setInquiry(e.target.value)}
+                            placeholder="문의 내용을 입력하세요..."
+                        />
+                        <button onClick={submitInquiry}>✅ 문의 제출</button>
+                        <button className={styles.closeButton} onClick={() => setShowInquiryForm(false)}>❌ 닫기</button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
