@@ -103,11 +103,48 @@ button {
     background-color: #c82333;
 }
 
+/* 🏆 팝업 컨테이너 (스크롤바 제거 및 폭 조정) */
+.pum-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* ✅ 정확한 중앙 정렬 */
+    width: calc(100% - 20px) !important; /* ✅ 부모 요소보다 넘치지 않도록 설정 */
+    max-width: 700px !important; /* ✅ 최대 너비 제한 */
+    height: 850px !important;
+    max-height: 90vh; /* ✅ 화면 높이를 넘지 않도록 설정 */
+    overflow: hidden !important; /* ✅ 불필요한 스크롤 제거 */
+    box-sizing: border-box; /* ✅ 패딩이 크기에 영향을 주지 않도록 설정 */
+    border-radius: 12px;
+    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* 🎨 팝업 콘텐츠 영역 */
+.pum-content iframe {
+    width: 100% !important;
+    height: 100% !important;
+    border: none;
+    border-radius: 12px;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+/* ✅ iframe 스타일 */
+.pum-content iframe {
+    width: 100% !important;
+    height: 100% !important;
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
 /* 📱 반응형 디자인 */
 @media (max-width: 768px) {
-    .popupContainer {
-        width: 95%;
-        max-width: 380px; /* ✅ 모바일에서 적당한 크기로 조정 */
+    .pum-container {
+        width: calc(100% - 20px) !important;
+        max-width: 95% !important;
+        height: 90vh !important;
+        max-height: 90%;
     }
 }
 
