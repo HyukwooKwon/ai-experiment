@@ -28,7 +28,24 @@
     background-color: #218838;
 }
 
-/* 💡 팝업이 화면 밖으로 넘어가는 문제 해결 */
+/* 🏆 팝업 컨테이너 (위치 및 크기 조정) */
+.popupContainer {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* ✅ 정확한 중앙 정렬 */
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 90%;  /* ✅ 작은 화면에서도 잘 보이도록 설정 */
+    max-width: 420px;  /* ✅ 너무 커지지 않도록 제한 */
+    max-height: 80vh; /* ✅ 화면 높이 대비 최대 크기 제한 */
+    overflow-y: auto;  /* ✅ 넘칠 경우 스크롤 */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+    z-index: 1002;
+}
+
+/* 💡 팝업 오버레이 (배경 어둡게) */
 .popupOverlay {
     position: fixed;
     top: 0;
@@ -40,58 +57,35 @@
     justify-content: center;
     align-items: center;
     z-index: 1001;
-    overflow: hidden;  /* ✅ 팝업이 화면을 넘지 않도록 설정 */
-}
-
-/* 🏆 팝업 컨테이너 (위치 조정) */
-.popupContainer {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);  /* ✅ 중앙 정렬 */
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    width: 90%;  /* ✅ 너비 조정 (작은 화면에서 넘치지 않도록) */
-    max-width: 450px;  /* ✅ 최대 너비 설정 */
-    max-height: 80vh;  /* ✅ 화면 높이의 80%까지만 사용 */
-    overflow-y: auto;  /* ✅ 내용이 많을 경우 스크롤 가능하도록 설정 */
-    height: auto;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
-    z-index: 1002;
 }
 
 /* 📩 입력 필드 공통 스타일 */
 input, textarea {
     width: 100%;
     padding: 12px;
-    margin: 10px 0; /* ✅ 간격 조정 */
+    margin: 10px 0;
     border: 1px solid #ddd;
     border-radius: 8px;
     font-size: 16px;
     transition: border 0.3s;
 }
 
-/* 📄 문의 내용 입력 칸 (높이 조정) */
+/* 📄 문의 내용 입력 칸 (적당한 크기로 조정) */
 textarea {
-    height: 100px;  /* ✅ 기존보다 작게 설정 */
-    resize: none;   /* ✅ 사용자가 크기 조절 못하도록 설정 */
+    height: 120px;
+    resize: none; /* ✅ 사용자가 크기 조절 못하게 설정 */
 }
 
-/* 🚀 버튼 스타일 */
+/* 🚀 버튼 스타일 (문의 제출 & 닫기) */
 button {
-    width: calc(100% - 20px);  /* ✅ 버튼이 부모 요소 너비를 넘지 않도록 설정 */
+    width: 100%;
     padding: 12px;
-    margin-top: 5px;  
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 8px;
+    margin-top: 10px;
     font-size: 16px;
     font-weight: bold;
+    border-radius: 8px;
     cursor: pointer;
     transition: background 0.3s;
-    box-sizing: border-box;  /* ✅ 컨테이너 너비를 넘지 않도록 설정 */
 }
 
 /* ✅ 문의 제출 버튼 */
@@ -112,10 +106,18 @@ button {
     border: none;
 }
 
-
 .closeButton:hover {
     background-color: #c82333;
 }
+
+/* 📱 반응형 디자인 */
+@media (max-width: 768px) {
+    .popupContainer {
+        width: 95%;
+        max-width: 380px; /* ✅ 모바일에서 적당한 크기로 조정 */
+    }
+}
+
 
 /* 🏆 챗봇 메시지 박스 */
 .chatBox {
@@ -198,13 +200,6 @@ button:hover {
     background-color: #0056b3;
 }
 
-/* 📱 반응형 디자인 */
-@media (max-width: 768px) {
-    .popupContainer {
-        width: 95%;  /* ✅ 모바일에서 더 작은 너비 적용 */
-        max-width: 400px;
-    }
-}
 
 /* ✅ 모바일 화면에서 버튼이 넘치지 않도록 설정 */
 button {
