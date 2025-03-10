@@ -28,7 +28,7 @@
     background-color: #218838;
 }
 
-/* 🏆 문의 남기기 팝업 */
+/* 💡 팝업이 화면 밖으로 넘어가는 문제 해결 */
 .popupOverlay {
     position: fixed;
     top: 0;
@@ -39,22 +39,26 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000;
+    z-index: 1001;
+    overflow: hidden;  /* ✅ 팝업이 화면을 넘지 않도록 설정 */
 }
 
-/* 🏆 문의 남기기 팝업 */
+/* 🏆 팝업 컨테이너 (위치 조정) */
 .popupContainer {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);  /* ✅ 중앙 정렬 */
     background: white;
     padding: 20px;
     border-radius: 10px;
-    width: 400px;  /* 기존 350px → 400px로 조정 */
-    height: auto;  /* ✅ 높이를 자동으로 조절 */
-    text-align: center;
+    width: 90%;  /* ✅ 너비 조정 (작은 화면에서 넘치지 않도록) */
+    max-width: 450px;  /* ✅ 최대 너비 설정 */
+    max-height: 80vh;  /* ✅ 화면 높이의 80%까지만 사용 */
+    overflow-y: auto;  /* ✅ 내용이 많을 경우 스크롤 가능하도록 설정 */
+    height: auto;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    z-index: 1002;
 }
 
 /* 📩 입력 필드 공통 스타일 */
@@ -196,17 +200,15 @@ button:hover {
 
 /* 📱 반응형 디자인 */
 @media (max-width: 768px) {
-    .container {
-        flex-direction: column;
+    .popupContainer {
+        width: 95%;  /* ✅ 모바일에서 더 작은 너비 적용 */
+        max-width: 400px;
     }
-
-    .chatContainer, .inquiryContainer {
-        width: 100%;
-    }
+}
 
 /* ✅ 모바일 화면에서 버튼이 넘치지 않도록 설정 */
 button {
 width: 100%;
 }
 
-}
+
