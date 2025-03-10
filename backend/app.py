@@ -9,7 +9,9 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 from datetime import datetime
 
 app = Flask(__name__, template_folder="templates", static_folder="static")
-CORS(app)
+
+# ✅ CORS 설정 추가 (프론트엔드에서 요청 가능하도록 설정)
+CORS(app, resources={r"/chatbot/*": {"origins": "*"}})
 
 # ✅ 현재 실행 중인 서버의 업체명
 CURRENT_COMPANY = os.getenv("COMPANY_NAME")
