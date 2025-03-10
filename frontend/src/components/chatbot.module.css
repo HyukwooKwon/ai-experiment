@@ -40,26 +40,58 @@
     box-shadow: inset 0px 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-/* 💬 챗봇 메시지 스타일 */
-.chatBox p {
-    padding: 10px;
-    border-radius: 10px;
-    max-width: 80%;
-    word-wrap: break-word;
-}
-
-/* 🟢 사용자 메시지 */
-.chatBox p:nth-child(odd) {
+/* 💬 사용자 & AI 메시지 스타일 */
+.userMessage {
     background: #007bff;
     color: white;
     align-self: flex-end;
     text-align: right;
+    padding: 12px;
+    border-radius: 15px;
+    max-width: 80%;
+    font-size: 16px;
+    margin: 5px 0;
+    display: inline-block;
+    position: relative;
 }
 
-/* 🔵 AI 메시지 */
-.chatBox p:nth-child(even) {
+/* 🟢 사용자 말풍선 꼬리 */
+.userMessage::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: -10px;
+    width: 0;
+    height: 0;
+    border-left: 10px solid #007bff;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+}
+
+/* 🤖 AI 말풍선 */
+.botMessage {
     background: #f1f1f1;
     color: black;
+    padding: 12px;
+    border-radius: 15px;
+    max-width: 80%;
+    font-size: 16px;
+    margin: 5px 0;
+    display: inline-block;
+    position: relative;
+}
+
+/* 🔵 AI 말풍선 꼬리 */
+.botMessage::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: -10px;
+    width: 0;
+    height: 0;
+    border-right: 10px solid #f1f1f1;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
 }
 
 /* ✏️ 입력 필드 */
@@ -71,12 +103,6 @@ input, textarea {
     border-radius: 8px;
     font-size: 16px;
     transition: border 0.3s;
-}
-
-/* 입력 필드 포커스 효과 */
-input:focus, textarea:focus {
-    border-color: #007bff;
-    outline: none;
 }
 
 /* 🚀 버튼 스타일 */
