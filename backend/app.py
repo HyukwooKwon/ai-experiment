@@ -14,6 +14,9 @@ CORS(app)
 # ✅ 현재 실행 중인 서버의 업체명
 CURRENT_COMPANY = os.getenv("COMPANY_NAME")
 
+if not CURRENT_COMPANY:
+    raise ValueError("❌ 환경 변수 'COMPANY_NAME'이 설정되지 않았습니다. Render 환경변수를 확인하세요!")
+
 # 동적 DB 연결 함수
 def get_company_db(company_name):
     db_path = f'databases/{company_name}.db'
