@@ -23,6 +23,8 @@ if not OPENAI_API_KEY:
     raise ValueError(f"❌ {CURRENT_COMPANY}의 OpenAI API 키가 설정되지 않았습니다. Render 환경변수를 확인하세요!")
 
 print(f"🚀 서버 시작됨 - 업체: {CURRENT_COMPANY}, 포트: {os.getenv('PORT')}")
+print(f"🔍 AI 모델: {os.getenv(f'AI_MODEL_{CURRENT_COMPANY}', '기본 모델 없음')}")
+print(f"🔍 OpenAI API Key: {OPENAI_API_KEY[:5]}*****")  # 보안을 위해 일부만 출력
 
 # 동적 DB 연결 함수
 def get_company_db(company_name):
