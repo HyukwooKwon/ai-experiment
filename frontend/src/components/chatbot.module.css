@@ -28,7 +28,7 @@
     background-color: #218838;
 }
 
-/* 🏆 챗봇 팝업 창 크기 자동 조정 (메시지 입력창이 벗어나지 않도록) */
+/* 🏆 팝업 창 크기 자동 조정 (메시지 입력창 포함) */
 .pum-container {
     position: fixed;
     top: 50%;
@@ -36,11 +36,12 @@
     transform: translate(-50%, -50%);
     width: 90vw !important;  /* 전체 화면 대비 90% 너비 */
     max-width: 800px !important; /* 최대 너비 제한 */
-    height: 90vh !important; /* 전체 화면 높이의 90% */
-    min-height: 600px !important; /* 최소 높이 설정 */
+    height: auto !important; /* 높이를 자동으로 조정 */
+    min-height: 650px !important; /* 최소 높이 설정 */
+    max-height: 90vh !important; /* 최대 높이 설정 */
     display: flex;
     flex-direction: column; /* 내부 요소를 세로 정렬 */
-    justify-content: space-between; /* 내부 요소가 팝업을 채우도록 정렬 */
+    justify-content: space-between; /* 내부 요소 정렬 */
     overflow: hidden !important; /* 내부 스크롤 제거 */
     border-radius: 12px;
     box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.3);
@@ -84,6 +85,21 @@
     border-radius: 8px;
     font-size: 16px;
 }
+
+/* 📱 모바일에서도 PC처럼 유지 */
+@media (max-width: 768px) {
+    .pum-container {
+        width: 95vw !important;
+        max-width: 95% !important;
+        min-height: 700px !important; /* 모바일에서도 최소 높이 보장 */
+        max-height: 90vh !important;
+    }
+
+    .pum-content iframe {
+        height: 100% !important;
+    }
+}
+
 
 /* 🏆 팝업 컨테이너 (위치 및 크기 조정) */
 .popupContainer {
