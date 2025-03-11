@@ -24,16 +24,17 @@ def get_company_settings(company_name):
     if not company_name or company_name not in COMPANY_NAMES:
         raise ValueError(f"❌ '{company_name}'는 이 서버에서 지원되지 않는 업체입니다. 현재 지원 업체: {COMPANY_NAMES}")
 
-    ai_model = os.getenv(f"AI_MODEL_{company_name}")  # ✅ 업체별 모델 확인
-    openai_api_key = os.getenv(f"OPENAI_API_KEY_{ai_model}")  # ✅ 모델에 맞는 API 키 확인
-    telegram_bot_token = os.getenv(f"TELEGRAM_BOT_TOKEN_{company_name}")  # ✅ 업체별 텔레그램 봇 토큰 확인
+    ai_model_key = f"AI_MODEL_{company_name}"  # ✅ 올바른 키 포맷 확인
+    ai_model = os.getenv(ai_model_key)
+    openai_api_key = os.getenv("OPENAI_API_KEY")
+    telegram_bot_token = os.getenv(f"TELEGRAM_BOT_TOKEN_{company_name}")  # 업체별 텔레그램 봇 토큰
 
     print(f"🔍 디버그 - {company_name}: AI_MODEL={ai_model}, OPENAI_API_KEY={openai_api_key}")
 
     if not ai_model:
-        raise ValueError(f"❌ '{company_name}'의 AI 모델이 설정되지 않았습니다.")
+        raise ValueError(f"❌ '{company_name}'의 AI 모델이 설정되지 않았습니다. (환경 변수 키: {ai_model_key})")
     if not openai_api_key:
-        raise ValueError(f"❌ '{ai_model}'의 OpenAI API 키가 설정되지 않았습니다.")
+        raise ValueError(f"❌ OpenAI API 키가 설정되지 않았습니다.")
 
     return {
         "AI_MODEL": ai_model,

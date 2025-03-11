@@ -94,6 +94,8 @@ def get_chatbot_response(user_message, company_name, ai_model, openai_api_key):
         return response.content if hasattr(response, 'content') else str(response)
 
     except openai.error.OpenAIError as e:
+        print(f"❌ OpenAI API 오류 발생: {str(e)}")
         return f"❌ OpenAI API 오류 발생: {str(e)}"
     except Exception as e:
+        print(f"❌ 시스템 오류 발생: {str(e)}")
         return f"❌ 시스템 오류 발생: {str(e)}"

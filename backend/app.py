@@ -29,24 +29,34 @@ def get_company_db(company_name):
     db_path = f"databases/{company_name}.db"
     engine = create_engine(f"sqlite:///{db_path}", echo=False)
 
-    class ChatHistory(Base):
-        __tablename__ = "chat_history"
-        id = Column(Integer, primary_key=True, autoincrement=True)
-        user_message = Column(String, nullable=False)
-        bot_response = Column(String, nullable=False)
-        timestamp = Column(DateTime, default=datetime.now)
+    # ✅ SQLite 데이터베이스 설정
+Base = declarative_base()
 
-    class Inquiry(Base):
-        __tablename__ = "inquiries"
-        id = Column(Integer, primary_key=True, autoincrement=True)
-        contact = Column(String, nullable=False)
-        inquiry = Column(String, nullable=False)
-        timestamp = Column(DateTime, default=datetime.now)
+class ChatHistory(Base):
+    __tablename__ = "chat_history"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_message = Column(String, nullable=False)
+    bot_response = Column(String, nullable=False)
+    timestamp = Column(DateTime, default=datetime.now)
 
+class Inquiry(Base):
+    __tablename__ = "inquiries"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    contact = Column(String, nullable=False)
+    inquiry = Column(String, nullable=False)
+    timestamp = Column(DateTime, default=datetime.now)
+
+def get_company_db(company_name):
+    """ 업체별 SQLite 데이터베이스를 설정 """
+    db_path = f"databases/{company_name}.db"
+    engine = create_engine(f"sqlite:///{db_path}", echo=False)
+
+    # ✅ 기존 테이블을 재사용하도록 변경
     Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)
     
     return Session, ChatHistory, Inquiry
+
 
 # ✅ 데이터 모델 정의
 class ChatInput(BaseModel):
