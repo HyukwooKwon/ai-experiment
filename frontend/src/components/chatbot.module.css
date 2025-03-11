@@ -28,6 +28,63 @@
     background-color: #218838;
 }
 
+/* 🏆 챗봇 팝업 창 크기 자동 조정 (메시지 입력창이 벗어나지 않도록) */
+.pum-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90vw !important;  /* 전체 화면 대비 90% 너비 */
+    max-width: 800px !important; /* 최대 너비 제한 */
+    height: 90vh !important; /* 전체 화면 높이의 90% */
+    min-height: 600px !important; /* 최소 높이 설정 */
+    display: flex;
+    flex-direction: column; /* 내부 요소를 세로 정렬 */
+    justify-content: space-between; /* 내부 요소가 팝업을 채우도록 정렬 */
+    overflow: hidden !important; /* 내부 스크롤 제거 */
+    border-radius: 12px;
+    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* 🏆 챗봇 iframe 크기 자동 조정 (스크롤 제거 & 내부에 맞춤) */
+.pum-content {
+    flex-grow: 1; /* 부모 요소에 맞춰 자동 크기 조정 */
+    display: flex;
+    flex-direction: column;
+    height: 100% !important;
+    overflow: hidden !important;
+}
+
+/* 🏆 챗봇 iframe 크기 조정 */
+.pum-content iframe {
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 12px;
+    flex-grow: 1; /* 내부 요소에 맞춰 자동 조정 */
+    overflow: hidden !important; /* 내부 스크롤 제거 */
+}
+
+/* 📩 메시지 입력창이 팝업 밖으로 벗어나지 않도록 설정 */
+.chatbot-input-container {
+    width: 100%;
+    padding: 10px;
+    background: white;
+    border-top: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* 📩 입력 필드 스타일 */
+.chatbot-input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
 /* 🏆 팝업 컨테이너 (위치 및 크기 조정) */
 .popupContainer {
     position: fixed;
@@ -97,42 +154,6 @@ textarea {
 
 .closeButton:hover {
     background-color: #c82333;
-}
-
-/* 🏆 팝업 창 크기 자동 조정 (메시지 입력창이 벗어나지 않도록) */
-.pum-container {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 90vw !important;  /* 전체 화면 대비 90% 너비 */
-    max-width: 800px !important; /* 최대 너비 제한 */
-    height: auto !important; /* 높이 자동 조정 */
-    min-height: 600px !important; /* 최소 높이 설정 (메시지 입력창이 벗어나지 않도록) */
-    max-height: 90vh !important; /* 최대 높이 설정 */
-    display: flex;
-    flex-direction: column; /* 내부 요소를 세로 정렬 */
-    overflow: hidden !important; /* 내부 스크롤 제거 */
-    border-radius: 12px;
-    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.3);
-}
-
-/* 🏆 챗봇 iframe 크기 자동 조정 (스크롤 제거 & 내부에 맞춤) */
-.pum-content iframe {
-    flex-grow: 1; /* 부모 요소에 맞춰 자동 크기 조정 */
-    width: 100% !important;
-    height: 100% !important;
-    max-width: 100% !important;
-    max-height: 100% !important;
-    border-radius: 12px;
-    overflow: hidden !important; /* 내부 스크롤 제거 */
-}
-
-/* 🏆 메시지 입력창이 팝업 밖으로 벗어나지 않도록 설정 */
-.pum-content {
-    display: flex;
-    flex-direction: column;
-    height: 100% !important;
 }
 
 
@@ -251,18 +272,17 @@ button {
 width: 100%;
 }
 
-/* 모바일에서도 PC 화면처럼 유지 */
-body {
-    min-width: 1024px !important; 
-    overflow-x: auto !important; /* 좌우 스크롤 허용 */
-}
+/* 📱 모바일에서도 PC처럼 유지 */
+@media (max-width: 768px) {
+    .pum-container {
+        width: 95vw !important;
+        max-width: 95% !important;
+        min-height: 650px !important; /* 모바일에서도 최소 높이 보장 */
+        max-height: 90vh !important;
+    }
 
-/* 강제로 반응형 해제 */
-@media (max-width: 1024px) {
-    html, body {
-        width: 1024px !important;
-        zoom: 1 !important;
+    .pum-content iframe {
+        height: 100% !important;
     }
 }
-
 
