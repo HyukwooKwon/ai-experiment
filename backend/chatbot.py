@@ -33,6 +33,10 @@ def create_or_update_faiss(company_name):
     """ 특정 업체의 벡터 DB를 생성 또는 업데이트 """
     ai_model, openai_api_key = get_openai_credentials(company_name)
 
+    if not openai_api_key:
+        print(f"❌ {company_name}의 OpenAI API 키가 없습니다! 벡터DB를 생성할 수 없습니다.")
+        return
+
     faiss_db_path = get_faiss_db_path(company_name)
     database_dir = f"./database/{company_name}"
 
@@ -69,6 +73,10 @@ def load_vectorstore(company_name):
     """ 특정 업체의 벡터 DB 로드 """
     ai_model, openai_api_key = get_openai_credentials(company_name)
 
+    if not openai_api_key:
+        print(f"❌ {company_name}의 OpenAI API 키가 없습니다! 벡터DB를 로드할 수 없습니다.")
+        return None
+
     faiss_db_path = get_faiss_db_path(company_name)
     if not os.path.exists(faiss_db_path):
         create_or_update_faiss(company_name)
@@ -83,9 +91,18 @@ def load_vectorstore(company_name):
 # ✅ 챗봇 응답 처리 함수
 def get_chatbot_response(user_message, company_name, ai_model, openai_api_key):
     """ 특정 업체의 AI 모델을 사용하여 챗봇 응답 생성 """
-    openai.api_key = openai_api_key  # ✅ API 키 설정
 
-    print(f"🚀 {company_name} 업체 요청 - 사용 모델: {ai_model}")
+    # ✅ API 키 및 모델 검증
+    if not ai_model:
+        return f"❌ {company_name}의 AI 모델이 설정되지 않았습니다!"
+    if not openai_api_key:
+        return f"❌ {company_name}의 OpenAI API 키가 설정되지 않았습니다!"
+
+    # ✅ 디버깅 로그 추가 (API 키 앞 5자리만 출력)
+    print(f"🚀 {company_name} 요청 - 모델: {ai_model}, API Key: {openai_api_key[:5]}*****")
+
+    # ✅ OpenAI API 키 설정
+    openai.api_key = openai_api_key
 
     try:
         chat = ChatOpenAI(api_key=openai_api_key, model=ai_model)
@@ -93,6 +110,8 @@ def get_chatbot_response(user_message, company_name, ai_model, openai_api_key):
 
         return response.content if hasattr(response, 'content') else str(response)
 
+    except openai.error.AuthenticationError:
+        return "❌ OpenAI API 인증 실패! API 키를 확인하세요."
     except openai.error.OpenAIError as e:
         print(f"❌ OpenAI API 오류 발생: {str(e)}")
         return f"❌ OpenAI API 오류 발생: {str(e)}"

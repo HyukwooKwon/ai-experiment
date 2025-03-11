@@ -9,6 +9,11 @@ from chatbot import get_chatbot_response
 from create_vector_db import create_or_update_faiss
 from config import get_company_settings  # ✅ 동적 환경 변수 불러오기
 
+# ✅ 모든 업체의 설정을 테스트 출력
+for company in ["companyA", "companyB", "companyC", "companyD"]:
+    settings = get_company_settings(company)
+    print(f"{company} - AI_MODEL: {settings['AI_MODEL']}, OPENAI_API_KEY: {settings['OPENAI_API_KEY'][:5]}*****")
+
 # ✅ FastAPI 앱 초기화
 app = FastAPI()
 
@@ -77,6 +82,13 @@ def chatbot(company_name: str, chat: ChatInput):
 
     ai_model = settings["AI_MODEL"]
     openai_api_key = settings["OPENAI_API_KEY"]
+    
+    # ✅ 디버깅 출력
+    print(f"📌 {company_name} - AI_MODEL={ai_model}, API_KEY={openai_api_key[:5]}*****")
+    
+    # ✅ API 키 확인 (없으면 에러)
+    if not openai_api_key:
+        raise HTTPException(status_code=400, detail=f"❌ {company_name}의 OpenAI API 키가 설정되지 않았습니다!")
 
     # ✅ 챗봇 응답 생성
     bot_response = get_chatbot_response(chat.message, company_name, ai_model, openai_api_key)
@@ -89,7 +101,7 @@ def chatbot(company_name: str, chat: ChatInput):
     session.commit()
     session.close()
 
-    return {"reply": f"{company_name}의 챗봇 응답 (모델: {ai_model})"}
+    return {"reply": f"{company_name}의 챗봇 응답: {bot_response}"}
 
 # ✅ 최근 대화 조회 API
 @app.get("/chatbot/history/{company_name}")

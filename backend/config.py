@@ -1,30 +1,53 @@
 import os
 from dotenv import load_dotenv
 
-# ✅ 환경변수 로드
+# .env 파일 로드
 load_dotenv()
 
-# ✅ 환경변수 확인
-OPENAI_API_KEY_GPT4 = os.getenv("OPENAI_API_KEY_gpt-4-turbo")
-print(f"🔍 OPENAI_API_KEY_gpt-4-turbo: {OPENAI_API_KEY_GPT4}")
+# ✅ 업체별 AI 모델 매핑
+COMPANY_AI_MODELS = {
+    "companyA": os.getenv("AI_MODEL_companyA"),
+    "companyB": os.getenv("AI_MODEL_companyB"),
+    "companyC": os.getenv("AI_MODEL_companyC"),
+    "companyD": os.getenv("AI_MODEL_companyD"),
+}
 
-if not OPENAI_API_KEY_GPT4:
-    raise ValueError("❌ OpenAI API 키가 설정되지 않았습니다. .env 파일을 확인하세요!")
+# ✅ 모델별 OpenAI API 키 매핑
+API_KEYS = {
+    "gpt-4-turbo": os.getenv("OPENAI_API_KEY_gpt-4-turbo"),
+    "gpt-3.5-turbo": os.getenv("OPENAI_API_KEY_gpt-3.5-turbo"),
+}
+
+def get_api_key(company: str):
+    """업체명으로 올바른 OpenAI API 키를 반환"""
+    model = COMPANY_AI_MODELS.get(company)
+    if not model:
+        raise ValueError(f"❌ {company}의 AI 모델이 설정되지 않았습니다!")
+
+    api_key = API_KEYS.get(model)
+    if not api_key:
+        raise ValueError(f"❌ {company}({model})의 OpenAI API 키가 설정되지 않았습니다!")
+
+    return api_key
 
 
 # ✅ 지원하는 업체 리스트 가져오기
 COMPANY_NAMES = os.getenv("COMPANY_NAMES", "").strip().split(",")
 
-print(f"🔍 디버그 - COMPANY_NAMES: {COMPANY_NAMES}")  # ✅ 현재 지원 업체 목록 출력
+# ✅ 환경 변수 디버깅 출력
+print(f"🔍 환경변수 디버그 - COMPANY_NAMES: {COMPANY_NAMES}")
+print(f"🔍 환경변수 디버그 - AI_MODEL_companyA: {COMPANY_AI_MODELS.get('companyA')}")
+print(f"🔍 환경변수 디버그 - AI_MODEL_companyB: {COMPANY_AI_MODELS.get('companyB')}")
+print(f"🔍 환경변수 디버그 - OPENAI_API_KEY_gpt-4-turbo: {API_KEYS.get('gpt-4-turbo')}")
+print(f"🔍 환경변수 디버그 - OPENAI_API_KEY_gpt-3.5-turbo: {API_KEYS.get('gpt-3.5-turbo')}")
 
 def get_company_settings(company_name):
-    """ 특정 업체의 AI 모델과 API 키, 텔레그램 봇 토큰을 가져옴 """
-    if not company_name or company_name not in COMPANY_NAMES:
-        raise ValueError(f"❌ '{company_name}'는 이 서버에서 지원되지 않는 업체입니다. 현재 지원 업체: {COMPANY_NAMES}")
+    """ 특정 업체의 AI 모델과 API 키를 반환 """
+    if company_name not in COMPANY_NAMES:
+        raise ValueError(f"❌ 지원되지 않는 업체입니다: {company_name}")
 
-    ai_model_key = f"AI_MODEL_{company_name}"  # ✅ 올바른 키 포맷 확인
-    ai_model = os.getenv(ai_model_key)
-    openai_api_key = os.getenv("OPENAI_API_KEY")
+    ai_model = COMPANY_AI_MODELS.get(company_name)
+    openai_api_key = API_KEYS.get(ai_model)  # ✅ 모델별 API 키 매핑
     telegram_bot_token = os.getenv(f"TELEGRAM_BOT_TOKEN_{company_name}")  # 업체별 텔레그램 봇 토큰
 
     print(f"🔍 디버그 - {company_name}: AI_MODEL={ai_model}, OPENAI_API_KEY={openai_api_key}")
@@ -33,6 +56,8 @@ def get_company_settings(company_name):
         raise ValueError(f"❌ '{company_name}'의 AI 모델이 설정되지 않았습니다. (환경 변수 키: {ai_model_key})")
     if not openai_api_key:
         raise ValueError(f"❌ OpenAI API 키가 설정되지 않았습니다.")
+    
+    print(f"✅ {company_name} 설정 로드 완료 - AI_MODEL: {ai_model}, API_KEY: {openai_api_key[:5]}*****")
 
     return {
         "AI_MODEL": ai_model,
