@@ -29,7 +29,7 @@
 }
 
 /* 🏆 팝업 창 크기 자동 조정 (스크롤 없이 내부 정렬) */
-.pum-container {
+.chatbot-container {
     position: fixed;
     top: 50%;
     left: 50%;
@@ -48,7 +48,7 @@
 }
 
 /* 🏆 팝업 내부 정렬 (iframe + 입력창 포함) */
-.pum-content {
+.chatbot-content {
     flex-grow: 1; /* 부모 요소에 맞춰 자동 크기 조정 */
     display: flex;
     flex-direction: column;
@@ -57,7 +57,7 @@
 }
 
 /* 🏆 챗봇 iframe 크기 조정 (스크롤 제거) */
-.pum-content iframe {
+.chatbot-content iframe {
     flex-grow: 1; /* 부모 요소에 맞춰 자동 조정 */
     width: 100% !important;
     height: calc(100% - 60px) !important; /* 메시지 입력창 공간 확보 */
@@ -90,14 +90,14 @@
 
 /* 📱 모바일에서도 동일한 레이아웃 유지 */
 @media (max-width: 768px) {
-    .pum-container {
+    .chatbot-container {
         width: 95vw !important;
         max-width: 95% !important;
         min-height: 700px !important; /* 모바일에서도 최소 높이 유지 */
         max-height: 90vh !important;
     }
 
-    .pum-content iframe {
+    .chatbot-content iframe {
         height: calc(100% - 60px) !important;
     }
 }
