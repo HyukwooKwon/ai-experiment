@@ -1,86 +1,145 @@
-# ✅ app.py (멀티테넌트로 수정된 최종본)
-
 import os
-from flask import Flask, request, jsonify, render_template
-from flask_cors import CORS
-from chatbot import get_chatbot_response
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 from sqlalchemy import create_engine, Column, Integer, String, DateTime
 from sqlalchemy.orm import sessionmaker, declarative_base
 from datetime import datetime
+from chatbot import get_chatbot_response
+from create_vector_db import create_or_update_faiss
 
-app = Flask(__name__, template_folder="templates", static_folder="static")
+# ✅ FastAPI 앱 초기화
+app = FastAPI()
 
-# ✅ CORS 설정 추가 (프론트엔드에서 요청 가능하도록 설정)
-CORS(app, resources={r"/chatbot/*": {"origins": "*"}})
+# ✅ CORS 설정 추가 (모든 출처 허용)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-# ✅ 현재 실행 중인 서버의 업체명
+# ✅ 환경변수 확인
 CURRENT_COMPANY = os.getenv("COMPANY_NAME")
-
 if not CURRENT_COMPANY:
-    raise ValueError("❌ 환경 변수 'COMPANY_NAME'이 설정되지 않았습니다. Render 환경변수를 확인하세요!")
+    raise ValueError("❌ 환경 변수 'COMPANY_NAME'이 설정되지 않았습니다.")
 
-# ✅ AI 키 확인
-OPENAI_API_KEY = os.getenv(f"OPENAI_API_KEY_{CURRENT_COMPANY}")
-if not OPENAI_API_KEY:
-    raise ValueError(f"❌ {CURRENT_COMPANY}의 OpenAI API 키가 설정되지 않았습니다. Render 환경변수를 확인하세요!")
+# ✅ SQLite 데이터베이스 설정
+Base = declarative_base()
 
-print(f"🚀 서버 시작됨 - 업체: {CURRENT_COMPANY}, 포트: {os.getenv('PORT')}")
-print(f"🔍 AI 모델: {os.getenv(f'AI_MODEL_{CURRENT_COMPANY}', '기본 모델 없음')}")
-print(f"🔍 OpenAI API Key: {OPENAI_API_KEY[:5]}*****")  # 보안을 위해 일부만 출력
-
-# 동적 DB 연결 함수
 def get_company_db(company_name):
-    db_path = f'databases/{company_name}.db'
-    engine = create_engine(f'sqlite:///{db_path}', echo=False)
-    Base = declarative_base()
+    """ 업체별 SQLite 데이터베이스를 설정 """
+    db_path = f"databases/{company_name}.db"
+    engine = create_engine(f"sqlite:///{db_path}", echo=False)
 
     class ChatHistory(Base):
-        __tablename__ = 'chat_history'
-        id = Column(Integer, primary_key=True)
-        user_message = Column(String)
-        bot_response = Column(String)
+        __tablename__ = "chat_history"
+        id = Column(Integer, primary_key=True, autoincrement=True)
+        user_message = Column(String, nullable=False)
+        bot_response = Column(String, nullable=False)
+        timestamp = Column(DateTime, default=datetime.now)
+
+    class Inquiry(Base):
+        __tablename__ = "inquiries"
+        id = Column(Integer, primary_key=True, autoincrement=True)
+        contact = Column(String, nullable=False)
+        inquiry = Column(String, nullable=False)
         timestamp = Column(DateTime, default=datetime.now)
 
     Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)
+    
+    return Session, ChatHistory, Inquiry
 
-    return Session, ChatHistory
+# ✅ 데이터 모델 정의
+class ChatInput(BaseModel):
+    message: str
 
-@app.route("/chatbot/<company_name>", methods=["POST"])
-def chatbot(company_name):
+class InquiryInput(BaseModel):
+    contact: str
+    inquiry: str
+
+# ✅ AI 챗봇 응답 API
+@app.post("/chatbot/{company_name}")
+def chatbot(company_name: str, chat: ChatInput):
+    """ 사용자의 질문을 받아 챗봇 응답을 반환하고 기록 저장 """
+    if company_name != CURRENT_COMPANY:
+        raise HTTPException(status_code=403, detail=f"❌ 현재 서버는 {CURRENT_COMPANY} 전용입니다.")
+
+    ai_model = os.getenv(f"AI_MODEL_{company_name}", "gpt-3.5-turbo")
+    openai_api_key = os.getenv(f"OPENAI_API_KEY_{company_name}")
+
+    if not openai_api_key:
+        raise HTTPException(status_code=500, detail="해당 업체의 API 키가 설정되지 않았습니다.")
+
+    # ✅ 챗봇 응답 생성
+    bot_response = get_chatbot_response(chat.message, company_name, ai_model, openai_api_key)
+
+    # ✅ 대화 기록 저장
+    Session, ChatHistory, _ = get_company_db(company_name)
+    session = Session()
+    new_chat = ChatHistory(user_message=chat.message, bot_response=bot_response)
+    session.add(new_chat)
+    session.commit()
+    session.close()
+
+    return {"reply": bot_response}
+
+# ✅ 최근 대화 조회 API
+@app.get("/chatbot/history/{company_name}")
+def get_chat_history(company_name: str, limit: int = 10):
+    """ 최근 대화 기록 조회 """
+    Session, ChatHistory, _ = get_company_db(company_name)
+    session = Session()
+
+    history = session.query(ChatHistory).order_by(ChatHistory.timestamp.desc()).limit(limit).all()
+    session.close()
+
+    return {"history": [{"message": h.user_message, "reply": h.bot_response, "timestamp": h.timestamp} for h in history]}
+
+# ✅ 문의 제출 API
+@app.post("/submit-inquiry")
+def submit_inquiry(inquiry: InquiryInput):
+    """ 문의 내용을 저장하는 API """
+    Session, _, Inquiry = get_company_db(CURRENT_COMPANY)
+    session = Session()
+
     try:
-        if company_name != CURRENT_COMPANY:
-            return jsonify({"error": f"❌ 현재 서버는 {CURRENT_COMPANY} 전용입니다. {company_name} 요청을 받을 수 없습니다."}), 403
-
-        data = request.get_json()
-        if not data or "message" not in data:
-            return jsonify({"error": "잘못된 요청 형식입니다."}), 400
-
-        user_message = data["message"]
-
-        # ✅ 업체별 AI 모델 및 API 키 가져오기
-        ai_model = os.getenv(f"AI_MODEL_{company_name}", "gpt-3.5-turbo")
-        openai_api_key = os.getenv(f"OPENAI_API_KEY_{company_name}")
-
-        if not openai_api_key:
-            return jsonify({"error": "해당 업체의 API 키가 설정되지 않았습니다."}), 500
-
-        bot_response = get_chatbot_response(user_message, company_name, ai_model, openai_api_key)
-
-        return jsonify({"reply": bot_response})
-
+        new_inquiry = Inquiry(contact=inquiry.contact, inquiry=inquiry.inquiry)
+        session.add(new_inquiry)
+        session.commit()
+        session.close()
+        return {"message": "✅ 문의가 성공적으로 저장되었습니다!"}
     except Exception as e:
-        return jsonify({"error": f"서버 오류 발생: {str(e)}"}), 500
+        session.rollback()
+        session.close()
+        raise HTTPException(status_code=500, detail=f"❌ 문의 저장 실패: {str(e)}")
 
+# ✅ 문의 목록 조회 API
+@app.get("/inquiries")
+def get_inquiries():
+    """ 저장된 문의 목록을 반환하는 API """
+    Session, _, Inquiry = get_company_db(CURRENT_COMPANY)
+    session = Session()
 
-@app.route("/update-db/<company_name>", methods=["POST"])
-def update_db(company_name):
+    inquiries = session.query(Inquiry).order_by(Inquiry.timestamp.desc()).all()
+    session.close()
+
+    return [{"contact": i.contact, "inquiry": i.inquiry, "timestamp": i.timestamp} for i in inquiries]
+
+# ✅ 벡터 DB 업데이트 API
+@app.post("/update-db/{company_name}")
+def update_db(company_name: str):
+    """ 벡터 DB 업데이트 """
     try:
         create_or_update_faiss(company_name)
-        return jsonify({"message": f"✅ {company_name} 벡터DB가 성공적으로 업데이트되었습니다!"}), 200
+        return {"message": f"✅ {company_name} 벡터DB가 성공적으로 업데이트되었습니다!"}
     except Exception as e:
-        return jsonify({"error": f"❌ 업데이트 실패: {str(e)}"}), 500
+        raise HTTPException(status_code=500, detail=f"❌ 업데이트 실패: {str(e)}")
 
+# ✅ 서버 실행
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))  # 환경변수에서 포트 가져오기
-    app.run(host="0.0.0.0", port=port)
+    import uvicorn
+    port = int(os.getenv("PORT", 5000))  # 환경변수에서 포트 가져오기
+    uvicorn.run(app, host="0.0.0.0", port=port)

@@ -12,7 +12,8 @@ BOT_TOKEN = os.getenv(f"TELEGRAM_BOT_TOKEN_{COMPANY_NAME}")
 if not BOT_TOKEN:
     raise ValueError(f"❌ {COMPANY_NAME}의 TELEGRAM_BOT_TOKEN이 설정되지 않았습니다!")
 
-BACKEND_URL = f"https://backend.onrender.com/chatbot/{COMPANY_NAME}"
+# ✅ 백엔드 URL 설정 (로컬 또는 서버 환경 자동 감지)
+BACKEND_URL = os.getenv("BACKEND_URL", "http://127.0.0.1:8000") + f"/chatbot/{COMPANY_NAME}"
 
 bot = telebot.TeleBot(BOT_TOKEN)
 
@@ -34,13 +35,22 @@ def handle_message(message):
     chat_id = message.chat.id
 
     try:
-        response = requests.post(BACKEND_URL, json={"message": user_text})
-        bot_response = response.json().get("reply", "❌ 응답을 받을 수 없습니다.")
-    except Exception as e:
-        bot_response = f"❌ 서버 오류 발생: {str(e)}"
+        response = requests.post(BACKEND_URL, json={"message": user_text}, timeout=5)
+        if response.status_code == 200:
+            bot_response = response.json().get("reply", "❌ 응답을 받을 수 없습니다.")
+        else:
+            bot_response = f"❌ 서버 오류 발생 (상태 코드: {response.status_code})"
+    except requests.exceptions.RequestException as e:
+        bot_response = f"❌ 서버 연결 오류 발생: {str(e)}"
 
     bot.send_message(chat_id, bot_response)
 
-# ✅ 텔레그램 봇 실행
-print(f"🚀 {COMPANY_NAME} 텔레그램 봇 실행 중... (토큰: {BOT_TOKEN})")
-bot.polling()
+# ✅ 텔레그램 봇 실행 (예외 발생 시 자동 재시작)
+while True:
+    try:
+        print(f"🚀 {COMPANY_NAME} 텔레그램 봇 실행 중... (토큰: {BOT_TOKEN})")
+        bot.polling()
+    except Exception as e:
+        print(f"⚠️ 봇 오류 발생: {str(e)}. 5초 후 재시작...")
+        import time
+        time.sleep(5)
