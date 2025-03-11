@@ -169,3 +169,17 @@ button {
         max-height: 90%;
     }
 }
+
+/* 모바일에서도 PC 화면처럼 유지 */
+body {
+    min-width: 1024px !important; 
+    overflow-x: auto !important; /* 좌우 스크롤 허용 */
+}
+
+/* 강제로 반응형 해제 */
+@media (max-width: 1024px) {
+    html, body {
+        width: 1024px !important;
+        zoom: 1 !important;
+    }
+}
