@@ -11,8 +11,6 @@ print(f"🔍 OPENAI_API_KEY_gpt-4-turbo: {OPENAI_API_KEY_GPT4}")
 if not OPENAI_API_KEY_GPT4:
     raise ValueError("❌ OpenAI API 키가 설정되지 않았습니다. .env 파일을 확인하세요!")
 
-# ✅ 환경변수 확인
-print(f"🔍 OPENAI_API_KEY_gpt-4-turbo: {os.getenv('OPENAI_API_KEY_gpt-4-turbo')}")
 
 # ✅ 지원하는 업체 리스트 가져오기
 COMPANY_NAMES = os.getenv("COMPANY_NAMES", "").strip().split(",")
