@@ -11,41 +11,31 @@
 
 /* 🏆 챗봇 컨테이너 */
 .chatContainer {
-    width: 100%;  /* ✅ 부모 요소 크기에 맞게 자동 조정 */
-    max-width: none;  /* ✅ 최대 너비 제한 해제 */
-    padding: 0;  /* ✅ 내부 여백 제거 */
-    border: none;  /* ✅ 불필요한 테두리 제거 */
-    box-shadow: none;  /* ✅ 그림자 제거 */
-    background: transparent;  /* ✅ 배경 투명하게 설정 */
+    width: 100%;
+    max-width: none;
+    padding: 0;
+    border: none;
+    background: transparent;
 }
 
-/* ✅ 문의 남기기 버튼 (초록색) */
-.inquiryButton {
-    background-color: #28a745;
-}
-
-.inquiryButton:hover {
-    background-color: #218838;
-}
-
-/* 🏆 팝업 컨테이너 (위치 및 크기 조정) */
+/* ✅ 팝업 컨테이너 */
 .popupContainer {
     position: fixed;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%); /* ✅ 정확한 중앙 정렬 */
+    transform: translate(-50%, -50%);
     background: white;
     padding: 20px;
     border-radius: 10px;
-    width: 90%;  /* ✅ 작은 화면에서도 잘 보이도록 설정 */
-    max-width: 420px;  /* ✅ 너무 커지지 않도록 제한 */
-    max-height: 80vh; /* ✅ 화면 높이 대비 최대 크기 제한 */
-    overflow-y: auto;  /* ✅ 넘칠 경우 스크롤 */
+    width: 90%;
+    max-width: 420px;
+    max-height: 80vh;
+    overflow-y: auto;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
     z-index: 1002;
 }
 
-/* 💡 팝업 오버레이 (배경 어둡게) */
+/* 💡 팝업 오버레이 */
 .popupOverlay {
     position: fixed;
     top: 0;
@@ -59,7 +49,7 @@
     z-index: 1001;
 }
 
-/* 📩 입력 필드 공통 스타일 */
+/* 📩 입력 필드 */
 input, textarea {
     width: 100%;
     padding: 12px;
@@ -70,20 +60,36 @@ input, textarea {
     transition: border 0.3s;
 }
 
-/* 📄 문의 내용 입력 칸 (적당한 크기로 조정) */
+/* 📄 문의 내용 입력 칸 */
 textarea {
     height: 120px;
-    resize: none; /* ✅ 사용자가 크기 조절 못하게 설정 */
+    resize: none;
 }
 
+/* ✅ 버튼 공통 스타일 */
+button {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
 
-/* ✅ 문의 제출 버튼 */
+/* 🟢 문의 버튼 */
+.inquiryButton {
+    background-color: #28a745;
+}
+.inquiryButton:hover {
+    background-color: #218838;
+}
+
+/* 🔵 제출 버튼 */
 .submitButton {
     background-color: #007bff;
     color: white;
-    border: none;
 }
-
 .submitButton:hover {
     background-color: #0056b3;
 }
@@ -92,82 +98,10 @@ textarea {
 .closeButton {
     background-color: #dc3545;
     color: white;
-    border: none;
 }
-
 .closeButton:hover {
     background-color: #c82333;
 }
-
-/* 🏆 팝업 컨테이너 (스크롤바 제거) */
-.pum-container {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 90% !important;  /* ✅ 부모 요소보다 넘치지 않도록 조정 */
-    max-width: 700px !important;
-    height: 85vh !important;  /* ✅ 화면 높이에 맞춰서 조정 */
-    max-height: 85vh;  /* ✅ 화면 높이를 넘지 않도록 제한 */
-    overflow: hidden !important; /* ✅ 내부 스크롤 제거 */
-    box-sizing: border-box;
-    border-radius: 12px;
-    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.3);
-}
-
-/* 🎨 팝업 콘텐츠 영역 (스크롤바 제거) */
-.pum-content {
-    width: 100% !important;
-    height: 100% !important;
-    padding: 0 !important;
-    overflow: hidden !important;
-    box-sizing: border-box;
-}
-
-/* ✅ iframe 크기 조정 */
-.pum-content iframe {
-    width: 100% !important;
-    height: 100% !important;
-    border: none;
-    border-radius: 12px;
-    box-sizing: border-box;
-    overflow: hidden;
-}
-
-/* 🏆 입력 필드 (폭 조정) */
-input, textarea {
-    width: calc(100% - 20px); /* ✅ 내부 여백 고려하여 폭 조정 */
-    padding: 12px;
-    margin: 5px auto;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 16px;
-    transition: border 0.3s;
-    box-sizing: border-box; /* ✅ 내부 패딩이 크기에 영향을 주지 않도록 설정 */
-}
-
-/* 🚀 버튼 스타일 (전송 & 문의 남기기) */
-button {
-    width: calc(100% - 20px);  /* ✅ 버튼이 넘치지 않도록 조정 */
-    padding: 12px;
-    margin: 5px auto;
-    font-size: 16px;
-    font-weight: bold;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background 0.3s;
-    display: block;
-}
-
-/* 📱 반응형 디자인 */
-@media (max-width: 768px) {
-    .pum-container {
-        width: 95% !important;
-        height: 90vh !important;
-        max-height: 90%;
-    }
-}
-
 
 /* 🏆 챗봇 메시지 박스 */
 .chatBox {
@@ -181,11 +115,7 @@ button {
 }
 
 /* 💬 사용자 & AI 메시지 스타일 */
-.userMessage {
-    background: #007bff;
-    color: white;
-    align-self: flex-end;
-    text-align: right;
+.userMessage, .botMessage {
     padding: 12px;
     border-radius: 15px;
     max-width: 80%;
@@ -195,7 +125,13 @@ button {
     position: relative;
 }
 
-/* 🟢 사용자 말풍선 꼬리 */
+/* 🟢 사용자 말풍선 */
+.userMessage {
+    background: #007bff;
+    color: white;
+    align-self: flex-end;
+    text-align: right;
+}
 .userMessage::after {
     content: "";
     position: absolute;
@@ -212,16 +148,7 @@ button {
 .botMessage {
     background: #f1f1f1;
     color: black;
-    padding: 12px;
-    border-radius: 15px;
-    max-width: 80%;
-    font-size: 16px;
-    margin: 5px 0;
-    display: inline-block;
-    position: relative;
 }
-
-/* 🔵 AI 말풍선 꼬리 */
 .botMessage::after {
     content: "";
     position: absolute;
@@ -234,15 +161,11 @@ button {
     border-bottom: 5px solid transparent;
 }
 
-
-button:hover {
-    background-color: #0056b3;
+/* 📱 모바일 최적화 */
+@media (max-width: 768px) {
+    .popupContainer {
+        width: 95%;
+        height: 90vh;
+        max-height: 90%;
+    }
 }
-
-
-/* ✅ 모바일 화면에서 버튼이 넘치지 않도록 설정 */
-button {
-width: 100%;
-}
-
-
