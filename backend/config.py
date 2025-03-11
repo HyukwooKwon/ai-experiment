@@ -1,8 +1,9 @@
 import os
 from dotenv import load_dotenv
 
-# .env 파일 로드
-load_dotenv()
+# ✅ Render에서도 환경 변수를 올바르게 불러오도록 설정
+dotenv_path = os.path.join(os.path.dirname(__file__), ".env")
+load_dotenv(dotenv_path)
 
 # ✅ 업체별 AI 모델 매핑
 COMPANY_AI_MODELS = {
@@ -38,14 +39,15 @@ COMPANY_NAMES = os.getenv("COMPANY_NAMES", "").strip().split(",")
 print(f"🔍 환경변수 디버그 - COMPANY_NAMES: {COMPANY_NAMES}")
 print(f"🔍 환경변수 디버그 - AI_MODEL_companyA: {COMPANY_AI_MODELS.get('companyA')}")
 print(f"🔍 환경변수 디버그 - AI_MODEL_companyB: {COMPANY_AI_MODELS.get('companyB')}")
-# print(f"🔍 환경변수 디버그 - OPENAI_API_KEY_gpt-4-turbo: {API_KEYS.get('gpt-4-turbo')}")
-# print(f"🔍 환경변수 디버그 - OPENAI_API_KEY_gpt-3.5-turbo: {API_KEYS.get('gpt-3.5-turbo')}")
+print(f"🔍 환경변수 디버그 - OPENAI_API_KEY_gpt-4-turbo: {'*****' if API_KEYS.get('gpt-4-turbo') else '❌ 없음'}")
+print(f"🔍 환경변수 디버그 - OPENAI_API_KEY_gpt-3.5-turbo: {'*****' if API_KEYS.get('gpt-3.5-turbo') else '❌ 없음'}")
 
 def get_company_settings(company_name):
     """ 특정 업체의 AI 모델과 API 키를 반환 """
     if company_name not in COMPANY_NAMES:
         raise ValueError(f"❌ 지원되지 않는 업체입니다: {company_name}")
 
+    ai_model_key = f"AI_MODEL_{company_name}"  # ✅ AI 모델 키 생성
     ai_model = COMPANY_AI_MODELS.get(company_name)
     openai_api_key = API_KEYS.get(ai_model)  # ✅ 모델별 API 키 매핑
     telegram_bot_token = os.getenv(f"TELEGRAM_BOT_TOKEN_{company_name}")  # 업체별 텔레그램 봇 토큰
