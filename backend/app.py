@@ -7,6 +7,7 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 from datetime import datetime
 from chatbot import get_chatbot_response
 from create_vector_db import create_or_update_faiss
+from config import get_company_settings  # ✅ 동적 환경 변수 불러오기
 
 # ✅ FastAPI 앱 초기화
 app = FastAPI()
@@ -19,11 +20,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-# ✅ 환경변수 확인
-CURRENT_COMPANY = os.getenv("COMPANY_NAME")
-if not CURRENT_COMPANY:
-    raise ValueError("❌ 환경 변수 'COMPANY_NAME'이 설정되지 않았습니다.")
 
 # ✅ SQLite 데이터베이스 설정
 Base = declarative_base()
@@ -60,18 +56,17 @@ class InquiryInput(BaseModel):
     contact: str
     inquiry: str
 
-# ✅ AI 챗봇 응답 API
+# ✅ AI 챗봇 응답 API (업체별 설정 동적 적용)
 @app.post("/chatbot/{company_name}")
 def chatbot(company_name: str, chat: ChatInput):
     """ 사용자의 질문을 받아 챗봇 응답을 반환하고 기록 저장 """
-    if company_name != CURRENT_COMPANY:
-        raise HTTPException(status_code=403, detail=f"❌ 현재 서버는 {CURRENT_COMPANY} 전용입니다.")
+    try:
+        settings = get_company_settings(company_name)  # ✅ 요청마다 업체별 환경 변수 적용
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
-    ai_model = os.getenv(f"AI_MODEL_{company_name}", "gpt-3.5-turbo")
-    openai_api_key = os.getenv(f"OPENAI_API_KEY_{company_name}")
-
-    if not openai_api_key:
-        raise HTTPException(status_code=500, detail="해당 업체의 API 키가 설정되지 않았습니다.")
+    ai_model = settings["AI_MODEL"]
+    openai_api_key = settings["OPENAI_API_KEY"]
 
     # ✅ 챗봇 응답 생성
     bot_response = get_chatbot_response(chat.message, company_name, ai_model, openai_api_key)
@@ -84,7 +79,7 @@ def chatbot(company_name: str, chat: ChatInput):
     session.commit()
     session.close()
 
-    return {"reply": bot_response}
+    return {"reply": f"{company_name}의 챗봇 응답 (모델: {ai_model})"}
 
 # ✅ 최근 대화 조회 API
 @app.get("/chatbot/history/{company_name}")
@@ -99,10 +94,10 @@ def get_chat_history(company_name: str, limit: int = 10):
     return {"history": [{"message": h.user_message, "reply": h.bot_response, "timestamp": h.timestamp} for h in history]}
 
 # ✅ 문의 제출 API
-@app.post("/submit-inquiry")
-def submit_inquiry(inquiry: InquiryInput):
-    """ 문의 내용을 저장하는 API """
-    Session, _, Inquiry = get_company_db(CURRENT_COMPANY)
+@app.post("/submit-inquiry/{company_name}")
+def submit_inquiry(company_name: str, inquiry: InquiryInput):
+    """ 특정 업체의 문의 내용을 저장하는 API """
+    Session, _, Inquiry = get_company_db(company_name)
     session = Session()
 
     try:
@@ -110,17 +105,17 @@ def submit_inquiry(inquiry: InquiryInput):
         session.add(new_inquiry)
         session.commit()
         session.close()
-        return {"message": "✅ 문의가 성공적으로 저장되었습니다!"}
+        return {"message": f"✅ {company_name}의 문의가 성공적으로 저장되었습니다!"}
     except Exception as e:
         session.rollback()
         session.close()
-        raise HTTPException(status_code=500, detail=f"❌ 문의 저장 실패: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"❌ {company_name}의 문의 저장 실패: {str(e)}")
 
 # ✅ 문의 목록 조회 API
-@app.get("/inquiries")
-def get_inquiries():
-    """ 저장된 문의 목록을 반환하는 API """
-    Session, _, Inquiry = get_company_db(CURRENT_COMPANY)
+@app.get("/inquiries/{company_name}")
+def get_inquiries(company_name: str):
+    """ 특정 업체의 저장된 문의 목록을 반환하는 API """
+    Session, _, Inquiry = get_company_db(company_name)
     session = Session()
 
     inquiries = session.query(Inquiry).order_by(Inquiry.timestamp.desc()).all()
@@ -131,12 +126,12 @@ def get_inquiries():
 # ✅ 벡터 DB 업데이트 API
 @app.post("/update-db/{company_name}")
 def update_db(company_name: str):
-    """ 벡터 DB 업데이트 """
+    """ 특정 업체의 벡터 DB 업데이트 """
     try:
         create_or_update_faiss(company_name)
-        return {"message": f"✅ {company_name} 벡터DB가 성공적으로 업데이트되었습니다!"}
+        return {"message": f"✅ {company_name}의 벡터DB가 성공적으로 업데이트되었습니다!"}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"❌ 업데이트 실패: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"❌ {company_name}의 업데이트 실패: {str(e)}")
 
 # ✅ 서버 실행
 if __name__ == "__main__":
