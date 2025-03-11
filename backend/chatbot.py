@@ -99,7 +99,7 @@ def get_chatbot_response(user_message, company_name, ai_model, openai_api_key):
         return f"❌ {company_name}의 OpenAI API 키가 설정되지 않았습니다!"
 
     # ✅ 디버깅 로그 추가 (API 키 앞 5자리만 출력)
-    print(f"🚀 {company_name} 요청 - 모델: {ai_model}, API Key: {openai_api_key[:5]}*****")
+    # print(f"🚀 {company_name} 요청 - 모델: {ai_model}, API Key: {openai_api_key[:5]}*****")
 
     # ✅ OpenAI API 키 설정
     openai.api_key = openai_api_key

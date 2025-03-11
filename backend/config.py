@@ -38,8 +38,8 @@ COMPANY_NAMES = os.getenv("COMPANY_NAMES", "").strip().split(",")
 print(f"🔍 환경변수 디버그 - COMPANY_NAMES: {COMPANY_NAMES}")
 print(f"🔍 환경변수 디버그 - AI_MODEL_companyA: {COMPANY_AI_MODELS.get('companyA')}")
 print(f"🔍 환경변수 디버그 - AI_MODEL_companyB: {COMPANY_AI_MODELS.get('companyB')}")
-print(f"🔍 환경변수 디버그 - OPENAI_API_KEY_gpt-4-turbo: {API_KEYS.get('gpt-4-turbo')}")
-print(f"🔍 환경변수 디버그 - OPENAI_API_KEY_gpt-3.5-turbo: {API_KEYS.get('gpt-3.5-turbo')}")
+# print(f"🔍 환경변수 디버그 - OPENAI_API_KEY_gpt-4-turbo: {API_KEYS.get('gpt-4-turbo')}")
+# print(f"🔍 환경변수 디버그 - OPENAI_API_KEY_gpt-3.5-turbo: {API_KEYS.get('gpt-3.5-turbo')}")
 
 def get_company_settings(company_name):
     """ 특정 업체의 AI 모델과 API 키를 반환 """
@@ -50,7 +50,8 @@ def get_company_settings(company_name):
     openai_api_key = API_KEYS.get(ai_model)  # ✅ 모델별 API 키 매핑
     telegram_bot_token = os.getenv(f"TELEGRAM_BOT_TOKEN_{company_name}")  # 업체별 텔레그램 봇 토큰
 
-    print(f"🔍 디버그 - {company_name}: AI_MODEL={ai_model}, OPENAI_API_KEY={openai_api_key}")
+    print(f"📌 디버깅 - {company_name}: AI_MODEL={ai_model}, API_KEY=*****")
+
 
     if not ai_model:
         raise ValueError(f"❌ '{company_name}'의 AI 모델이 설정되지 않았습니다. (환경 변수 키: {ai_model_key})")
