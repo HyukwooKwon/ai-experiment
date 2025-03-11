@@ -41,7 +41,8 @@ print(f"🔍 환경변수 디버그 - OPENAI_API_KEY_gpt-3.5-turbo: {'*****' if 
 def get_company_settings(company_name):
     """특정 업체의 AI 모델과 API 키를 반환"""
     if company_name not in ALLOWED_COMPANIES:
-        raise ValueError(f"❌ 지원되지 않는 업체입니다: {company_name}")
+        print(f"❌ [ERROR] '{company_name}'은(는) {DEPLOY_ENV.upper()} 서버에서 지원되지 않는 업체입니다!")
+        raise ValueError(f"❌ 지원되지 않는 업체입니다: {company_name} (현재 환경: {DEPLOY_ENV})")
 
     ai_model = COMPANY_AI_MODELS.get(company_name)
     openai_api_key = API_KEYS.get(ai_model)
