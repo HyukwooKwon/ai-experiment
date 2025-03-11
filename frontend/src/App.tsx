@@ -1,18 +1,17 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import Chatbot from "./components/Chatbot";
 
-
-
-function App() {
+const App = () => {
     return (
         <Router>
             <Routes>
-                <Route path="/" element={<Chatbot />} />
+                <Route path="/" element={<h1>홈페이지</h1>} />
                 <Route path="/chatbot" element={<Chatbot />} />
+                <Route path="*" element={<h1>404 Not Found</h1>} />
             </Routes>
         </Router>
     );
-}
+};
 
 export default App;
