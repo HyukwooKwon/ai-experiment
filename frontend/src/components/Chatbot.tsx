@@ -18,6 +18,12 @@ const Chatbot = () => {
     // ✅ 한 서버에서 모든 업체 지원 → 백엔드 URL 통일
     const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "https://bot-back-a.onrender.com";
 
+    // ✅ 디버깅 로그 추가 (백엔드 URL 및 회사명 확인)
+    useEffect(() => {
+        console.log(`🔍 [DEBUG] 회사명: ${companyName}`);
+        console.log(`🔍 [DEBUG] 백엔드 요청 URL: ${BACKEND_URL}/chatbot/${companyName}`);
+    }, [companyName]);
+
     // ✅ 메시지 전송 함수 (AI 챗봇 요청)
     const sendMessage = async () => {
         if (!input.trim()) return;  // 공백 문자 입력 방지
