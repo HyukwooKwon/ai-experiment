@@ -99,46 +99,42 @@ textarea {
     background-color: #c82333;
 }
 
-/* 🏆 팝업 컨테이너 (스크롤바 제거) */
+/* 🏆 팝업 창 크기 자동 조정 (메시지 입력창이 벗어나지 않도록) */
 .pum-container {
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 90% !important;  /* ✅ 부모 요소보다 넘치지 않도록 조정 */
-    max-width: 700px !important;
-    height: 85vh !important;  /* ✅ 화면 높이에 맞춰서 조정 */
-    max-height: 85vh;  /* ✅ 화면 높이를 넘지 않도록 제한 */
-    overflow: hidden !important; /* ✅ 내부 스크롤 제거 */
-    box-sizing: border-box;
+    width: 90vw !important;  /* 전체 화면 대비 90% 너비 */
+    max-width: 800px !important; /* 최대 너비 제한 */
+    height: auto !important; /* 높이 자동 조정 */
+    min-height: 600px !important; /* 최소 높이 설정 (메시지 입력창이 벗어나지 않도록) */
+    max-height: 90vh !important; /* 최대 높이 설정 */
+    display: flex;
+    flex-direction: column; /* 내부 요소를 세로 정렬 */
+    overflow: hidden !important; /* 내부 스크롤 제거 */
     border-radius: 12px;
     box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.3);
 }
 
-/* 🏆 챗봇 팝업 창이 짤리지 않게 설정 (스크롤 없이 자동 조정) */
-.pum-container {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 90vw !important; /* 📌 PC & 모바일에서 가로 크기 자동 조정 */
-    max-width: 800px !important; /* 📌 최대 너비 설정 */
-    height: 90vh !important; /* 📌 화면 높이에 맞게 자동 조정 */
-    max-height: 90vh !important; /* 📌 최대 높이 설정 */
-    overflow: hidden !important; /* 📌 내부 스크롤 제거 */
-    border-radius: 12px;
-    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.3);
-}
-
-/* 🏆 챗봇 iframe 크기 자동 조정 */
+/* 🏆 챗봇 iframe 크기 자동 조정 (스크롤 제거 & 내부에 맞춤) */
 .pum-content iframe {
+    flex-grow: 1; /* 부모 요소에 맞춰 자동 크기 조정 */
     width: 100% !important;
-    height: 100% !important; /* 📌 내부에서 스크롤이 생기지 않도록 100% 설정 */
+    height: 100% !important;
     max-width: 100% !important;
     max-height: 100% !important;
     border-radius: 12px;
-    overflow: hidden !important;
+    overflow: hidden !important; /* 내부 스크롤 제거 */
 }
+
+/* 🏆 메시지 입력창이 팝업 밖으로 벗어나지 않도록 설정 */
+.pum-content {
+    display: flex;
+    flex-direction: column;
+    height: 100% !important;
+}
+
 
 /* 🏆 입력 필드 (폭 조정) */
 input, textarea {
@@ -165,15 +161,19 @@ button {
     display: block;
 }
 
-/* 📱 반응형 디자인 */
+/* 📱 모바일에서도 PC처럼 유지 */
 @media (max-width: 768px) {
     .pum-container {
-        width: 95% !important;
-        height: 90vh !important;
-        max-height: 90%;
+        width: 95vw !important;
+        max-width: 95% !important;
+        min-height: 650px !important; /* 모바일에서도 최소 높이 보장 */
+        max-height: 90vh !important;
+    }
+
+    .pum-content iframe {
+        height: 100% !important;
     }
 }
-
 
 /* 🏆 챗봇 메시지 박스 */
 .chatBox {
