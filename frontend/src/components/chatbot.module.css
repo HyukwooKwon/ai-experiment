@@ -115,23 +115,29 @@ textarea {
     box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.3);
 }
 
-/* 🎨 팝업 콘텐츠 영역 (스크롤바 제거) */
-.pum-content {
-    width: 100% !important;
-    height: 100% !important;
-    padding: 0 !important;
-    overflow: hidden !important;
-    box-sizing: border-box;
+/* 🏆 챗봇 팝업 창이 짤리지 않게 설정 (스크롤 없이 자동 조정) */
+.pum-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90vw !important; /* 📌 PC & 모바일에서 가로 크기 자동 조정 */
+    max-width: 800px !important; /* 📌 최대 너비 설정 */
+    height: 90vh !important; /* 📌 화면 높이에 맞게 자동 조정 */
+    max-height: 90vh !important; /* 📌 최대 높이 설정 */
+    overflow: hidden !important; /* 📌 내부 스크롤 제거 */
+    border-radius: 12px;
+    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.3);
 }
 
-/* ✅ iframe 크기 조정 */
+/* 🏆 챗봇 iframe 크기 자동 조정 */
 .pum-content iframe {
     width: 100% !important;
-    height: 100% !important;
-    border: none;
+    height: 100% !important; /* 📌 내부에서 스크롤이 생기지 않도록 100% 설정 */
+    max-width: 100% !important;
+    max-height: 100% !important;
     border-radius: 12px;
-    box-sizing: border-box;
-    overflow: hidden;
+    overflow: hidden !important;
 }
 
 /* 🏆 입력 필드 (폭 조정) */
