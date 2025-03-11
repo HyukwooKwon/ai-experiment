@@ -28,7 +28,7 @@
     background-color: #218838;
 }
 
-/* 🏆 팝업 창 크기 자동 조정 (메시지 입력창 포함) */
+/* 🏆 팝업 창 크기 자동 조정 (스크롤 없이 내부 정렬) */
 .pum-container {
     position: fixed;
     top: 50%;
@@ -37,17 +37,17 @@
     width: 90vw !important;  /* 전체 화면 대비 90% 너비 */
     max-width: 800px !important; /* 최대 너비 제한 */
     height: auto !important; /* 높이를 자동으로 조정 */
-    min-height: 650px !important; /* 최소 높이 설정 */
-    max-height: 90vh !important; /* 최대 높이 설정 */
+    min-height: 600px !important; /* 최소 높이 설정 */
+    max-height: 85vh !important; /* 화면 높이의 85% */
     display: flex;
-    flex-direction: column; /* 내부 요소를 세로 정렬 */
-    justify-content: space-between; /* 내부 요소 정렬 */
+    flex-direction: column;
+    justify-content: space-between; /* 내부 요소가 팝업을 채우도록 정렬 */
     overflow: hidden !important; /* 내부 스크롤 제거 */
     border-radius: 12px;
     box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.3);
 }
 
-/* 🏆 챗봇 iframe 크기 자동 조정 (스크롤 제거 & 내부에 맞춤) */
+/* 🏆 팝업 내부 정렬 (iframe + 입력창 포함) */
 .pum-content {
     flex-grow: 1; /* 부모 요소에 맞춰 자동 크기 조정 */
     display: flex;
@@ -56,16 +56,18 @@
     overflow: hidden !important;
 }
 
-/* 🏆 챗봇 iframe 크기 조정 */
+/* 🏆 챗봇 iframe 크기 조정 (스크롤 제거) */
 .pum-content iframe {
+    flex-grow: 1; /* 부모 요소에 맞춰 자동 조정 */
     width: 100% !important;
-    height: 100% !important;
+    height: calc(100% - 60px) !important; /* 메시지 입력창 공간 확보 */
+    max-width: 100% !important;
+    max-height: 100% !important;
     border-radius: 12px;
-    flex-grow: 1; /* 내부 요소에 맞춰 자동 조정 */
-    overflow: hidden !important; /* 내부 스크롤 제거 */
+    overflow: hidden !important;
 }
 
-/* 📩 메시지 입력창이 팝업 밖으로 벗어나지 않도록 설정 */
+/* 📩 메시지 입력창이 팝업 내에서 벗어나지 않도록 설정 */
 .chatbot-input-container {
     width: 100%;
     padding: 10px;
@@ -86,19 +88,20 @@
     font-size: 16px;
 }
 
-/* 📱 모바일에서도 PC처럼 유지 */
+/* 📱 모바일에서도 동일한 레이아웃 유지 */
 @media (max-width: 768px) {
     .pum-container {
         width: 95vw !important;
         max-width: 95% !important;
-        min-height: 700px !important; /* 모바일에서도 최소 높이 보장 */
+        min-height: 700px !important; /* 모바일에서도 최소 높이 유지 */
         max-height: 90vh !important;
     }
 
     .pum-content iframe {
-        height: 100% !important;
+        height: calc(100% - 60px) !important;
     }
 }
+
 
 
 /* 🏆 팝업 컨테이너 (위치 및 크기 조정) */
@@ -287,18 +290,3 @@ button:hover {
 button {
 width: 100%;
 }
-
-/* 📱 모바일에서도 PC처럼 유지 */
-@media (max-width: 768px) {
-    .pum-container {
-        width: 95vw !important;
-        max-width: 95% !important;
-        min-height: 650px !important; /* 모바일에서도 최소 높이 보장 */
-        max-height: 90vh !important;
-    }
-
-    .pum-content iframe {
-        height: 100% !important;
-    }
-}
-
