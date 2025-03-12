@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Chatbot from './components/Chatbot';
 
 function App() {
@@ -11,5 +11,11 @@ function App() {
     </Router>
   );
 }
+
+<Router>
+  <Routes>
+    <Route path="/chatbot" element={<Chatbot />} />
+  </Routes>
+</Router>
 
 export default App;
