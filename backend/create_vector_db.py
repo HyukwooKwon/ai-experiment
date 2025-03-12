@@ -27,21 +27,25 @@ def loader_selector(filepath):
 
 def create_or_update_faiss(company_name):
     """ 특정 업체의 벡터 DB를 생성 또는 업데이트 """
-    ai_model, openai_api_key = get_openai_credentials(company_name)
-
-    # ✅ 절대 경로 설정
-    base_dir = Path(__file__).resolve().parent
-    company_db_path = base_dir / "database" / company_name
-    faiss_db_path = base_dir / "faiss_indexes" / f"{company_name}_index"
-
-    print(f"\n🔍 벡터DB 생성 시작 - {company_name}")
-    print(f"📂 데이터 경로 확인: {company_db_path.resolve()}")
-    
-    if not company_db_path.exists():
-        print(f"❌ '{company_db_path}' 폴더가 없습니다. 벡터DB를 생성할 수 없습니다.")
-        return
-
     try:
+        ai_model, openai_api_key = get_openai_credentials(company_name)
+
+        if not openai_api_key:
+            print(f"❌ {company_name}의 OpenAI API 키가 없습니다! 벡터DB를 생성할 수 없습니다.")
+            return
+
+        # ✅ 절대 경로 설정
+        base_dir = Path(__file__).resolve().parent
+        company_db_path = base_dir / "database" / company_name
+        faiss_db_path = base_dir / "faiss_indexes" / f"{company_name}_index"
+
+        print(f"\n🔍 벡터DB 생성 시작 - {company_name} (모델: {ai_model})")
+        print(f"📂 데이터 경로 확인: {company_db_path.resolve()}")
+        
+        if not company_db_path.exists():
+            print(f"❌ '{company_db_path}' 폴더가 없습니다. 벡터DB를 생성할 수 없습니다.")
+            return
+
         print(f"📂 {company_name}의 문서를 로딩 중...")
         files = list(company_db_path.glob("*.*"))
         print(f"📌 파일 목록: {files if files else '없음'}")
