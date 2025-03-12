@@ -1,5 +1,6 @@
 import os
 import telebot
+import openai
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -60,35 +61,41 @@ def chatbot(company_name: str, chat: ChatInput):
     ai_model = settings["AI_MODEL"]
     openai_api_key = settings["OPENAI_API_KEY"]
 
-    # ✅ 모델별 텔레그램 봇 토큰 (사용자와의 챗봇 응답)
-    telegram_bot_token = settings["TELEGRAM_BOT_TOKEN"]
-    # ✅ 통합 업로드 봇토큰 및 업체별 채널 ID (기록 업로드)
     telegram_upload_bot_token = settings["TELEGRAM_BOT_TOKEN_UPLOAD"]
     telegram_chat_id = settings["TELEGRAM_CHAT_ID"]
 
-    bot_response = get_chatbot_response(chat.message, company_name, ai_model, openai_api_key)
+    user_message = chat.message.strip()
 
-    # DB 저장
+    if user_message.startswith(("이미지:", "그림:", "image:", "img:")):
+        prompt = user_message.split(":", 1)[1].strip()
+        try:
+            openai.api_key = openai_api_key
+            response = openai.Image.create(prompt=prompt, size="1024x1024", n=1)
+            image_url = response['data'][0]['url']
+            bot_response = f"이미지를 생성했습니다: {image_url}"
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"이미지 생성 실패: {str(e)}")
+    else:
+        bot_response = get_chatbot_response(user_message, company_name, ai_model, openai_api_key)
+
     Session, ChatHistory, _ = get_company_db(company_name)
     session = Session()
-    new_chat = ChatHistory(user_message=chat.message, bot_response=bot_response)
+    new_chat = ChatHistory(user_message=user_message, bot_response=bot_response)
     session.add(new_chat)
     session.commit()
     session.close()
 
-    # ✅ 챗봇기록 텔레그램 채널로 업로드 (업로드용 통합봇 사용)
     try:
         telegram_bot_upload = telebot.TeleBot(telegram_upload_bot_token)
         telegram_bot_upload.send_message(
             telegram_chat_id,
-            f"📌 [업체: {company_name}의 새로운 챗봇 기록]\n\n👤질문:\n{chat.message}\n\n🤖답변:\n{bot_response}"
+            f"📌 [업체: {company_name}의 새로운 챗봇 기록]\n\n👤질문:\n{user_message}\n\n🤖답변:\n{bot_response}"
         )
     except Exception as e:
         print(f"⚠️ 텔레그램 메시지 전송 실패: {str(e)}")
 
-    return {"reply": f"{company_name}의 챗봇 응답: {bot_response}"}
+    return {"reply": bot_response}
 
-# 나머지 API는 기존 코드 그대로 유지 (수정 X)
 @app.get("/chatbot/history/{company_name}")
 def get_chat_history(company_name: str, limit: int = 10):
     Session, ChatHistory, _ = get_company_db(company_name)
