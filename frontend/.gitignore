@@ -21,6 +21,3 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
-# index.html을 Git 배포에서 제외
-frontend/src/components/index.html
