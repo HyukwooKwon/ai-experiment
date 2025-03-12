@@ -225,17 +225,3 @@ button:hover {
   10%, 90% { opacity: 1; }
   100% { opacity: 0; }
 }
-
-
-/* 🚨 모바일에서 iframe 내부 터치 스크롤을 완벽하게 지원하는 최종 코드 */
-@media (pointer: coarse) {
-  #chatbotPopup, .popup-inner {
-    overflow: hidden !important; /* 외부 팝업창은 스크롤 금지 */
-  }
-
-  .chatbot-iframe {
-    overflow: auto !important; /* iframe 내부에만 스크롤 적용 (핵심) */
-    -webkit-overflow-scrolling: touch !important; /* 모바일 터치 지원 */
-    pointer-events: auto !important; /* iframe 터치 활성화 (매우 중요!) */
-  }
-}

@@ -74,7 +74,7 @@ const Chatbot = () => {
   return (
     <div className={styles.container}>
       <div className={styles.chatContainer}>
-        <h2>💬 AI Chatbot ({companyName})</h2>
+        <h2>💬 리액터AI ({companyName})</h2>
 
         <div className={styles.chatBox}>
           {messages.map((msg, index) => (
