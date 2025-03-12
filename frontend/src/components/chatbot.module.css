@@ -232,3 +232,52 @@ button:hover {
         font-size: 16px !important;
     }
 }
+
+/* 💡모바일 팝업창 완벽 대응 CSS (최종 완성본)*/
+@media (pointer: coarse) {
+  
+    /* 팝업창 모바일 전체 확대 */
+    #chatbotPopup {
+      width: 95vw !important;
+      max-width: none !important;
+      height: 90vh !important;
+      max-height: none !important;
+    }
+  
+    /* iframe도 팝업창에 꽉차게 */
+    .chatbot-iframe {
+      width: 100% !important;
+      height: 100% !important;
+    }
+  
+    /* 모바일 확대 안내문구 정확한 위치 고정 */
+    .mobile-zoom-tip {
+      display: block !important;
+      position: absolute;
+      top: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.7);
+      color: #fff;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 14px;
+      z-index: 100001;
+      animation: fadeInOut 4s forwards;
+      pointer-events: none;
+    }
+  }
+  
+  /* 팝업 내부 필수 포지션 설정 (이거 없으면 문구 안뜸) */
+  .popup-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+  
+  @keyframes fadeInOut {
+    0% { opacity: 0; }
+    10%,90% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+  
