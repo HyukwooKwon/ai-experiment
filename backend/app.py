@@ -66,7 +66,7 @@ def chatbot(company_name: str, chat: ChatInput):
 
     user_message = chat.message.strip()
 
-    image_keywords = ["그림 그려줘", "이미지 생성해줘", "이미지 그려줘", "그림 생성"]
+    image_keywords = ["그림 그려줘", "이미지 생성해줘", "이미지 그려줘", "그림 생성", "그림 그려주세요", "이미지 생성 해주세요"]
 
     if any(keyword in user_message for keyword in image_keywords):
         prompt = user_message
