@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot Test</title>
+    <link rel="stylesheet" href="chatbot.module.css"> <!-- CSS 파일 연결 -->
+</head>
+<body>
+    <h1>Welcome to the Chatbot</h1>
+    <button class="fixed-chatbot-button">챗봇 열기</button>
+
+    <!-- 챗봇 팝업 -->
+    <div class="chatbot-container">
+        <div class="chatbot-header">
+            <h2>Sein Cluster AI 챗봇</h2>
+            <button class="chatbot-close">X</button>
+        </div>
+        <div class="chatbot-content">
+            <iframe class="chatbot-iframe" src="https://bot-front-a.onrender.com/#/chatbot?company=companyA"></iframe>
+            <div class="chatbot-input-container">
+                <input type="text" class="chatbot-input" placeholder="메시지를 입력하세요...">
+                <button class="submitButton">전송</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
