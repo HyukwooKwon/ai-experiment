@@ -227,20 +227,15 @@ button:hover {
 }
 
 
-/* 🚨 최종적으로 모바일 스크롤 문제를 해결할 코드 🚨 */
+/* 🚨 모바일에서 iframe 내부 터치 스크롤을 완벽하게 지원하는 최종 코드 */
 @media (pointer: coarse) {
-  #chatbotPopup {
-    overflow-y: auto !important; /* 반드시 auto로 변경 */
-    -webkit-overflow-scrolling: touch !important; /* 모바일 부드러운 스크롤 지원 */
-  }
-
-  .popup-inner {
-    overflow: auto !important;
-    -webkit-overflow-scrolling: touch;
+  #chatbotPopup, .popup-inner {
+    overflow: hidden !important; /* 외부 팝업창은 스크롤 금지 */
   }
 
   .chatbot-iframe {
-    flex-grow: 1 !important;
-    height: 100% !important;
+    overflow: auto !important; /* iframe 내부에만 스크롤 적용 (핵심) */
+    -webkit-overflow-scrolling: touch !important; /* 모바일 터치 지원 */
+    pointer-events: auto !important; /* iframe 터치 활성화 (매우 중요!) */
   }
 }
