@@ -66,7 +66,7 @@ def chatbot(company_name: str, chat: ChatInput):
 
     user_message = chat.message.strip()
 
-    image_keywords = ["그림", "그려", "이미지", "image", "img"]
+    image_keywords = ["그림 그려줘", "이미지 생성해줘", "이미지 그려줘", "그림 생성"]
 
     if any(keyword in user_message for keyword in image_keywords):
         prompt = user_message
@@ -81,7 +81,7 @@ def chatbot(company_name: str, chat: ChatInput):
             image_url = response.data[0].url
             bot_response = f"이미지를 생성했습니다: {image_url}"
         except Exception as e:
-            raise HTTPException(status_code=500, detail=f"이미지 생성 실패: {str(e)}")
+            bot_response = f"이미지 생성 실패: 요청이 부적절하거나 명확하지 않습니다."
     else:
         bot_response = get_chatbot_response(user_message, company_name, ai_model, openai_api_key)
 
