@@ -324,3 +324,22 @@ h1 {
     color: #333;
     font-size: 2rem;
 }
+
+.pum-container {
+    height: 85vh !important; 
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.pum-content {
+    flex: 1 !important; 
+    overflow: hidden !important;
+    display: flex !important;
+}
+
+.chatbot-iframe {
+    flex-grow: 1 !important;
+    width: 100% !important;
+    height: 100% !important;
+    border: none !important;
+}
