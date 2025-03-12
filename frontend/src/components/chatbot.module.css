@@ -225,3 +225,22 @@ button:hover {
   10%, 90% { opacity: 1; }
   100% { opacity: 0; }
 }
+
+
+/* 🚨 최종적으로 모바일 스크롤 문제를 해결할 코드 🚨 */
+@media (pointer: coarse) {
+  #chatbotPopup {
+    overflow-y: auto !important; /* 반드시 auto로 변경 */
+    -webkit-overflow-scrolling: touch !important; /* 모바일 부드러운 스크롤 지원 */
+  }
+
+  .popup-inner {
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .chatbot-iframe {
+    flex-grow: 1 !important;
+    height: 100% !important;
+  }
+}
