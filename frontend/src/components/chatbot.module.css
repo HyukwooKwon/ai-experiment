@@ -1,300 +1,227 @@
 /* 🏆 전체 컨테이너 */
 .container {
-    display: flex;
-    justify-content: space-between;
-    max-width: 900px;
-    margin: auto;
-    gap: 20px;
-    padding: 20px;
-    font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: space-between;
+  max-width: 900px;
+  margin: auto;
+  gap: 20px;
+  padding: 20px;
+  font-family: Arial, sans-serif;
 }
 
 /* 🏆 챗봇 컨테이너 */
 .chatContainer {
-    width: 100%;
-    padding: 0;
-    background: transparent;
-    border: none;
-    box-shadow: none;
+  width: 100%;
+  padding: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
 }
 
 /* ✅ 문의 남기기 버튼 */
 .inquiryButton {
-    background-color: #28a745;
+  background-color: #28a745;
 }
 .inquiryButton:hover {
-    background-color: #218838;
+  background-color: #218838;
 }
 
 /* 🏆 팝업 컨테이너 공통 */
 .pum-container,
-.chatbotcontainer {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 90vw !important;
-    max-width: 800px;
-    height: 85vh !important;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-    display: flex !important;
-    flex-direction: column;
-    overflow: hidden !important;
-    z-index: 1002;
+.chatbotcontainer,
+#chatbotPopup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90vw;
+  max-width: 800px;
+  height: 85vh;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 1002;
 }
 
 /* 🏆 챗봇 헤더 */
 .chatbotheader {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 15px;
-    background: #007bff;
-    color: white;
-    border-radius: 12px 12px 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  background: #007bff;
+  color: white;
+  border-radius: 12px 12px 0 0;
 }
 
 /* 🏆 닫기 버튼 스타일 */
 .chatbotclose,
-.closeButton {
-    background: #dc3545;
-    color: white;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 5px;
-    cursor: pointer;
+.closeButton,
+.close-popup-btn {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 10000;
 }
 
-.closeButton:hover, .chatbotclose:hover {
-    background: #c82333;
+.closeButton:hover,
+.chatbotclose:hover,
+.close-popup-btn:hover {
+  background: #c82333;
 }
 
 /* 🏆 챗봇 iframe */
-.chatbot-iframe, .chatbotiframe, .pum-content iframe {
-    flex-grow: 1;
-    width: 100% !important;
-    height: calc(100% - 50px) !important; /* 헤더 높이만큼 조정 */
-    border: none;
-    border-radius: 0 0 12px 12px;
-    overflow: hidden !important;
+.chatbot-iframe,
+.chatbotiframe,
+.pum-content iframe {
+  flex-grow: 1;
+  width: 100%;
+  height: calc(100% - 50px);
+  border: none;
+  border-radius: 0 0 12px 12px;
+  overflow: hidden;
 }
 
 /* 🏆 입력 필드 공통 */
 input, textarea {
-    width: calc(100% - 20px);
-    padding: 12px;
-    margin: 10px auto;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 16px;
-    box-sizing: border-box;
+  width: calc(100% - 20px);
+  padding: 12px;
+  margin: 10px auto;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  box-sizing: border-box;
 }
 
 textarea {
-    height: 120px;
-    resize: none;
+  height: 120px;
+  resize: none;
 }
 
 /* 🚀 버튼 스타일 */
 button {
-    width: calc(100% - 20px);
-    padding: 12px;
-    margin: 5px auto;
-    font-size: 16px;
-    border-radius: 8px;
-    cursor: pointer;
-    display: block;
+  width: calc(100% - 20px);
+  padding: 12px;
+  margin: 5px auto;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: block;
 }
 
 button:hover {
-    background-color: #0056b3;
+  background-color: #0056b3;
 }
 
 /* 🏆 챗봇 메시지 박스 */
 .chatBox {
-    height: 350px;
-    overflow-y: auto;
-    border-radius: 8px;
-    padding: 15px;
-    background: #f7f7f7;
-    border: 1px solid #ddd;
+  height: 350px;
+  overflow-y: auto;
+  border-radius: 8px;
+  padding: 15px;
+  background: #f7f7f7;
+  border: 1px solid #ddd;
 }
 
 .userMessage, .botMessage {
-    padding: 12px;
-    border-radius: 15px;
-    max-width: 80%;
-    font-size: 16px;
-    margin: 5px 0;
-    position: relative;
-    display: inline-block;
+  padding: 12px;
+  border-radius: 15px;
+  max-width: 80%;
+  font-size: 16px;
+  margin: 5px 0;
+  position: relative;
+  display: inline-block;
 }
 
 .userMessage {
-    background: #007bff;
-    color: white;
-    align-self: flex-end;
+  background: #007bff;
+  color: white;
+  align-self: flex-end;
 }
 .userMessage::after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    right: -10px;
-    border-left: 10px solid #007bff;
-    border-top: 5px solid transparent;
-    border-bottom: 5px solid transparent;
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: -10px;
+  border-left: 10px solid #007bff;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
 }
 
 .botMessage {
-    background: #f1f1f1;
-    color: black;
+  background: #f1f1f1;
+  color: black;
 }
 .botMessage::after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: -10px;
-    border-right: 10px solid #f1f1f1;
-    border-top: 5px solid transparent;
-    border-bottom: 5px solid transparent;
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: -10px;
+  border-right: 10px solid #f1f1f1;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
 }
 
-/* 📱 모바일 반응형 */
-@media (max-width: 768px) {
-    .pum-container, .chatbotcontainer {
-        width: 95vw !important;
-        height: 90vh !important;
-    }
-
-    .fixed-chatbot-button {
-        bottom: 20px;
-        left: 20px;
-        padding: 10px 15px;
-        font-size: 14px;
-    }
-}
-
-/* 모바일 확대 안내 문구 스타일 (확실한 버전) */
-.mobile-zoom-tip {
-    display: none; /* 기본 숨김 */
+/* 📱 모바일 반응형 완벽 대응 */
+@media (max-width: 768px), (pointer: coarse) {
+  #chatbotPopup,
+  .chatbotcontainer,
+  .pum-container {
+    width: 95vw !important;
+    max-width: none !important;
+    height: 90vh !important;
+    max-height: none !important;
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
   }
-  
-  @media (pointer: coarse) {
-    .mobile-zoom-tip {
-      display: block !important;
-      position: absolute;
-      top: 15px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(0, 0, 0, 0.7);
-      color: #fff;
-      padding: 8px 12px;
-      border-radius: 8px;
-      font-size: 14px;
-      text-align: center;
-      z-index: 100001; /* 팝업보다 더 위로 설정 */
-      animation: fadeInOut 4s forwards;
-      pointer-events: none;
-    }
-  
-    /* 팝업 컨테이너에 position 추가 필수 */
-    .popup-inner {
-      position: relative; /* 부모요소에 position 추가 */
-      width: 100%;
-      height: 100%;
-    }
-  
-    @keyframes fadeInOut {
-      0% { opacity: 0; }
-      10%, 90% { opacity: 1; }
-      100% { opacity: 0; }
-    }
+
+  .fixed-chatbot-button {
+    bottom: 20px;
+    left: 20px;
+    padding: 10px 15px;
+    font-size: 14px;
   }
-  
-/* 모바일 전용 팝업창 크기 확대 (반응형 전용) */
-@media screen and (max-width: 768px) {
-    #chatbotPopup {
-        width: 95% !important;       /* 모바일 너비 꽉 차게 설정 */
-        max-width: 95% !important;
-        height: 85vh !important;     /* 화면 높이의 85% 사용 */
-        max-height: 85vh !important;
-    }
 
-    .chatbot-iframe {
-        width: 100% !important;
-        height: 100% !important;
-    }
-
-    .close-popup-btn {
-        padding: 8px 14px !important; /* 닫기 버튼 모바일에서 터치 쉽게 */
-        font-size: 16px !important;
-    }
-}
-
-/* 💡모바일 팝업창 완벽 대응 CSS (최종 완성본)*/
-@media (pointer: coarse) {
-  
-    /* 팝업창 모바일 전체 확대 */
-    #chatbotPopup {
-      width: 95vw !important;
-      max-width: none !important;
-      height: 90vh !important;
-      max-height: none !important;
-    }
-  
-    /* iframe도 팝업창에 꽉차게 */
-    .chatbot-iframe {
-      width: 100% !important;
-      height: 100% !important;
-    }
-  
-    /* 모바일 확대 안내문구 정확한 위치 고정 */
-    .mobile-zoom-tip {
-      display: block !important;
-      position: absolute;
-      top: 15px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(0,0,0,0.7);
-      color: #fff;
-      padding: 8px 14px;
-      border-radius: 8px;
-      font-size: 14px;
-      z-index: 100001;
-      animation: fadeInOut 4s forwards;
-      pointer-events: none;
-    }
+  .chatbot-iframe, .chatbotiframe, .pum-content iframe {
+    height: 100% !important;
   }
-  
-  /* 팝업 내부 필수 포지션 설정 (이거 없으면 문구 안뜸) */
+
   .popup-inner {
-    position: relative;
+    overflow: auto !important;
+    position: relative !important;
     width: 100%;
     height: 100%;
   }
-  
-  @keyframes fadeInOut {
-    0% { opacity: 0; }
-    10%,90% { opacity: 1; }
-    100% { opacity: 0; }
+
+  .mobile-zoom-tip {
+    display: block !important;
+    position: absolute;
+    top: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.7);
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    z-index: 10001;
+    animation: fadeInOut 4s forwards;
+    pointer-events: none;
   }
-  
-  @media (pointer: coarse) {
-    /* 팝업 컨테이너가 모바일에서 화면 넘칠 경우 자동 스크롤 허용 */
-    #chatbotPopup {
-      overflow-y: auto !important;
-      -webkit-overflow-scrolling: touch !important; /* 부드러운 스크롤 */
-    }
-  
-    .popup-inner {
-      overflow: auto !important; /* 반드시 추가 */
-      -webkit-overflow-scrolling: touch; /* iOS 부드러운 스크롤 */
-    }
-  
-    .chatbot-iframe {
-      height: 100% !important;
-    }
-  }
-  
+}
+
+/* 안내문구 애니메이션 */
+@keyframes fadeInOut {
+  0% { opacity: 0; }
+  10%, 90% { opacity: 1; }
+  100% { opacity: 0; }
+}
