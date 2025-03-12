@@ -132,11 +132,27 @@ const Chatbot = () => {
   );
 };
 
-// 메시지 컴포넌트 별도 분리 (선택적)
-const ChatMessage = React.memo(({ message }: { message: Message }) => (
-  <p className={message.sender === "user" ? styles.userMessage : styles.botMessage}>
-    {message.text}
-  </p>
-));
+// 기존 ChatMessage 컴포넌트 수정
+const ChatMessage = React.memo(({ message }: { message: Message }) => {
+  const isImage = message.text.startsWith("이미지를 생성했습니다:");
+
+  return (
+    <p className={message.sender === "user" ? styles.userMessage : styles.botMessage}>
+      {isImage ? (
+        <>
+          {message.text.split("이미지를 생성했습니다:")[0]}
+          <img 
+            src={message.text.split("이미지를 생성했습니다:")[1].trim()} 
+            alt="생성된 이미지"
+            style={{ maxWidth: '100%', borderRadius: '10px', marginTop: '10px' }}
+          />
+        </>
+      ) : (
+        message.text
+      )}
+    </p>
+  );
+});
+
 
 export default Chatbot;
