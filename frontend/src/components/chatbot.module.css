@@ -213,3 +213,22 @@ button:hover {
     }
   }
   
+/* 모바일 전용 팝업창 크기 확대 (반응형 전용) */
+@media screen and (max-width: 768px) {
+    #chatbotPopup {
+        width: 95% !important;       /* 모바일 너비 꽉 차게 설정 */
+        max-width: 95% !important;
+        height: 85vh !important;     /* 화면 높이의 85% 사용 */
+        max-height: 85vh !important;
+    }
+
+    .chatbot-iframe {
+        width: 100% !important;
+        height: 100% !important;
+    }
+
+    .close-popup-btn {
+        padding: 8px 14px !important; /* 닫기 버튼 모바일에서 터치 쉽게 */
+        font-size: 16px !important;
+    }
+}
