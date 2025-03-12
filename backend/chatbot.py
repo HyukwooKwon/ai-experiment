@@ -88,27 +88,41 @@ def load_vectorstore(company_name):
     )
     return vectorstore
 
-# ✅ 챗봇 응답 처리 함수
+# ✅ 챗봇 응답 처리 함수 (수정됨)
 def get_chatbot_response(user_message, company_name, ai_model, openai_api_key):
-    """ 특정 업체의 AI 모델을 사용하여 챗봇 응답 생성 """
+    """ 특정 업체의 AI 모델과 벡터DB를 사용하여 챗봇 응답 생성 """
 
-    # ✅ API 키 및 모델 검증
+    # API 키 및 모델 검증
     if not ai_model:
         return f"❌ {company_name}의 AI 모델이 설정되지 않았습니다!"
     if not openai_api_key:
         return f"❌ {company_name}의 OpenAI API 키가 설정되지 않았습니다!"
 
-    # ✅ 디버깅 로그 추가 (API 키 앞 5자리만 출력)
-    # print(f"🚀 {company_name} 요청 - 모델: {ai_model}, API Key: {openai_api_key[:5]}*****")
-
-    # ✅ OpenAI API 키 설정
-    openai.api_key = openai_api_key
-
     try:
-        chat = ChatOpenAI(api_key=openai_api_key, model=ai_model)
-        response = chat.invoke(user_message)
+        # 벡터DB 로드
+        vectorstore = load_vectorstore(company_name)
+        
+        if vectorstore:
+            # 유사도 검색 (가장 관련있는 상위 3개 문서)
+            docs = vectorstore.similarity_search(user_message, k=3)
+            context = "\n\n".join([doc.page_content for doc in docs])
 
-        return response.content if hasattr(response, 'content') else str(response)
+            prompt = f"""
+            아래 내용을 참고하여 질문에 답변하세요.
+
+            {context}
+
+            질문: {user_message}
+            답변:
+            """
+
+            chat = ChatOpenAI(api_key=openai_api_key, model=ai_model)
+            response = chat.invoke(prompt)
+            
+            return response.content if hasattr(response, 'content') else str(response)
+
+        else:
+            return "❌ 벡터DB를 로드하는 데 실패했습니다."
 
     except openai.error.AuthenticationError:
         return "❌ OpenAI API 인증 실패! API 키를 확인하세요."
@@ -118,3 +132,4 @@ def get_chatbot_response(user_message, company_name, ai_model, openai_api_key):
     except Exception as e:
         print(f"❌ 시스템 오류 발생: {str(e)}")
         return f"❌ 시스템 오류 발생: {str(e)}"
+
