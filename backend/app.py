@@ -1,7 +1,7 @@
 import os
 import telebot
 from openai import OpenAI
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request  # ✅ 정확한 import
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from sqlalchemy import create_engine, Column, Integer, String, DateTime
@@ -67,7 +67,6 @@ def chatbot(company_name: str, chat: ChatInput):
     user_message = chat.message.strip()
 
     image_keywords = ["그림", "이미지", "그려", "생성"]
-
     if any(keyword in user_message for keyword in image_keywords):
         prompt = user_message
         try:
@@ -81,18 +80,16 @@ def chatbot(company_name: str, chat: ChatInput):
             image_url = response.data[0].url
             bot_response = f"이미지를 생성했습니다: {image_url}"
         except Exception as e:
-            bot_response = f"이미지 생성 실패: 요청이 부적절하거나 명확하지 않습니다."
+            bot_response = f"이미지 생성 실패: {str(e)}"
     else:
         bot_response = get_chatbot_response(user_message, company_name, ai_model, openai_api_key)
 
-    # 이후 DB저장 및 텔레그램 업로드는 그대로 진행
     Session, ChatHistory, _ = get_company_db(company_name)
     session = Session()
     new_chat = ChatHistory(user_message=user_message, bot_response=bot_response)
     session.add(new_chat)
     session.commit()
     session.close()
-
 
     try:
         telegram_bot_upload = telebot.TeleBot(telegram_upload_bot_token)
@@ -104,6 +101,35 @@ def chatbot(company_name: str, chat: ChatInput):
         print(f"⚠️ 텔레그램 메시지 전송 실패: {str(e)}")
 
     return {"reply": bot_response}
+
+# ✅ 카카오톡 연동을 위한 별도 API 추가 (중요)
+@app.post("/chatbot/{company_name}/kakao")
+async def kakao_chatbot(company_name: str, request: Request):
+    body = await request.json()
+    user_message = body["userRequest"]["utterance"].strip()
+
+    try:
+        settings = get_company_settings(company_name)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    ai_model = settings["AI_MODEL"]
+    openai_api_key = settings["OPENAI_API_KEY"]
+
+    bot_response = get_chatbot_response(user_message, company_name, ai_model, openai_api_key)
+
+    return {
+        "version": "2.0",
+        "template": {
+            "outputs": [
+                {
+                    "simpleText": {
+                        "text": bot_response
+                    }
+                }
+            ]
+        }
+    }
 
 @app.get("/chatbot/history/{company_name}")
 def get_chat_history(company_name: str, limit: int = 10):
