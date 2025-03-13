@@ -113,8 +113,8 @@ async def kakao_chatbot(company_name: str, request: Request):
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-    ai_model = settings["AI_MODEL"]
     openai_api_key = settings["OPENAI_API_KEY"]
+    ai_model = "gpt-3.5-turbo"  # 카카오톡 전용으로 더 빠른 모델 사용하기!
 
     bot_response = get_chatbot_response(user_message, company_name, ai_model, openai_api_key)
 
@@ -130,6 +130,7 @@ async def kakao_chatbot(company_name: str, request: Request):
             ]
         }
     }
+
 
 @app.get("/chatbot/history/{company_name}")
 def get_chat_history(company_name: str, limit: int = 10):
