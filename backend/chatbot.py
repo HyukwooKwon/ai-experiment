@@ -6,6 +6,7 @@ from langchain_community.vectorstores import FAISS
 from langchain_openai import OpenAIEmbeddings, ChatOpenAI
 import openai
 from config import get_company_settings
+from app import get_company_db, ChatHistory
 
 
 def get_faiss_db_path(company_name):
@@ -81,31 +82,41 @@ def load_vectorstore(company_name):
     return vectorstore
 
 
+def save_to_db(user_message, bot_response, company_name):
+    Session = get_company_db(company_name)
+    with Session() as session:
+        new_chat = ChatHistory(user_message=user_message, bot_response=bot_response)
+        session.add(new_chat)
+        session.commit()
+
+def get_recent_history(company_name, limit=3):
+    Session = get_company_db(company_name)
+    with Session() as session:
+        return session.query(ChatHistory).order_by(ChatHistory.timestamp.desc()).limit(limit).all()
+
 def get_chatbot_response(user_message, company_name, ai_model, openai_api_key):
-    if not (ai_model and openai_api_key):
-        return f"❌ {company_name}의 설정이 잘못되었습니다."
-
     try:
-        vectorstore = load_vectorstore(company_name)
+        recent_chats = get_recent_history(company_name)
+        context = "\n\n".join([
+            f"질문: {chat.user_message}\n답변: {chat.bot_response}" for chat in recent_chats
+        ])
 
-        if vectorstore:
-            docs = vectorstore.similarity_search(user_message, k=3)
-            context = "\n\n".join(doc.page_content for doc in docs)
+        prompt = f"""당신은 돈을 벌기 위한 다양한 방법을 연구하는 전문가입니다. 
+이전 대화 내용과 상대방의 의견을 참고하여 더욱 구체적이고 현실적인 아이디어를 발전시키세요.
 
-            prompt = f"""아래 내용을 참고하여 질문에 답변하세요.\n\n{context}\n\n질문: {user_message}\n답변:"""
+이전 대화 내용:
+{context}
 
-            chat = ChatOpenAI(api_key=openai_api_key, model=ai_model)
-            response = chat.invoke(prompt)
+상대방의 의견:
+{user_message}
 
-            return getattr(response, 'content', str(response))
-        else:
-            return "❌ 벡터DB 로드 실패."
+발전된 아이디어:"""
 
-    except openai.error.AuthenticationError:
-        return "❌ OpenAI 인증 실패."
-    except openai.error.OpenAIError as e:
-        print(f"❌ OpenAI API 오류: {str(e)}")
-        return f"❌ OpenAI API 오류: {str(e)}"
+        chat = ChatOpenAI(api_key=openai_api_key, model=ai_model)
+        response = chat.invoke(prompt)
+
+        return getattr(response, 'content', str(response))
+
     except Exception as e:
         print(f"❌ 시스템 오류: {str(e)}")
         return f"❌ 시스템 오류: {str(e)}"
