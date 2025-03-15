@@ -7,6 +7,9 @@ load_dotenv(Path(__file__).resolve().parent / ".env")
 COMPANY_NAMES = os.getenv("COMPANY_NAMES", "").split(",")
 
 COMPANY_AI_MODELS = {name: os.getenv(f"AI_MODEL_{name}", "gpt-3.5-turbo") for name in COMPANY_NAMES}
+COMPANY_PROMPTS = {name: os.getenv(f"PROMPT_{name}") for name in COMPANY_NAMES}
+COMPANY_DB_PATHS = {name: os.getenv(f"DB_PATH_{name}") for name in COMPANY_NAMES}
+
 
 API_KEYS = {
     model: os.getenv(f"OPENAI_API_KEY_{model}") for model in set(COMPANY_AI_MODELS.values())
@@ -21,6 +24,8 @@ def get_company_settings(company_name):
 
     ai_model = COMPANY_AI_MODELS[company_name]
     openai_api_key = API_KEYS.get(ai_model)
+    prompt = COMPANY_PROMPTS[company_name]
+    db_path = COMPANY_DB_PATHS[company_name]
 
     telegram_bot_token = os.getenv(f"TELEGRAM_BOT_TOKEN_{ai_model}")
     telegram_upload_bot_token = os.getenv("TELEGRAM_BOT_TOKEN_UPLOAD")
@@ -45,8 +50,9 @@ def get_company_settings(company_name):
         "OPENAI_API_KEY": openai_api_key,
         "TELEGRAM_BOT_TOKEN": telegram_bot_token,
         "TELEGRAM_BOT_TOKEN_UPLOAD": telegram_upload_bot_token,
-        "TELEGRAM_CHAT_ID": telegram_chat_id
+        "TELEGRAM_CHAT_ID": telegram_chat_id,
+        "PROMPT": prompt,
+        "DB_PATH": db_path
     }
-
 
 BACKEND_URL = os.getenv("BACKEND_URL", "http://127.0.0.1:8000")

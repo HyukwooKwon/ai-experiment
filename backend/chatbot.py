@@ -6,7 +6,7 @@ from langchain_community.vectorstores import FAISS
 from langchain_openai import OpenAIEmbeddings, ChatOpenAI
 import openai
 from config import get_company_settings
-from app import get_company_db, ChatHistory
+from database import get_company_db, ChatHistory
 
 
 def get_faiss_db_path(company_name):
@@ -82,41 +82,29 @@ def load_vectorstore(company_name):
     return vectorstore
 
 
-def save_to_db(user_message, bot_response, company_name):
-    Session = get_company_db(company_name)
-    with Session() as session:
-        new_chat = ChatHistory(user_message=user_message, bot_response=bot_response)
-        session.add(new_chat)
-        session.commit()
+def get_chatbot_response(user_message, company_name):
+    settings = get_company_settings(company_name)
+    Session = get_company_db(settings["DB_PATH"])
 
-def get_recent_history(company_name, limit=3):
-    Session = get_company_db(company_name)
+    # 최근 5개 대화 불러오기
     with Session() as session:
-        return session.query(ChatHistory).order_by(ChatHistory.timestamp.desc()).limit(limit).all()
-
-def get_chatbot_response(user_message, company_name, ai_model, openai_api_key):
-    try:
-        recent_chats = get_recent_history(company_name)
+        recent_chats = session.query(ChatHistory).order_by(ChatHistory.timestamp.desc()).limit(5).all()
         context = "\n\n".join([
             f"질문: {chat.user_message}\n답변: {chat.bot_response}" for chat in recent_chats
         ])
 
-        prompt = f"""당신은 돈을 벌기 위한 다양한 방법을 연구하는 전문가입니다. 
-이전 대화 내용과 상대방의 의견을 참고하여 더욱 구체적이고 현실적인 아이디어를 발전시키세요.
+    # 이전 내용을 반드시 참조하도록 프롬프트 강화
+    prompt = f"""{settings['PROMPT']} 
 
-이전 대화 내용:
+이전 대화:
 {context}
 
 상대방의 의견:
 {user_message}
 
-발전된 아이디어:"""
+발전된 아이디어(반드시 이전과 다른 새로운 아이디어):"""
 
-        chat = ChatOpenAI(api_key=openai_api_key, model=ai_model)
-        response = chat.invoke(prompt)
+    chat = ChatOpenAI(api_key=settings["OPENAI_API_KEY"], model=settings["AI_MODEL"])
+    response = chat.invoke(prompt)
 
-        return getattr(response, 'content', str(response))
-
-    except Exception as e:
-        print(f"❌ 시스템 오류: {str(e)}")
-        return f"❌ 시스템 오류: {str(e)}"
+    return getattr(response, 'content', str(response))
